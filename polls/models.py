@@ -14,7 +14,7 @@ class Choice(models.Model):
     venue_name = models.CharField(max_length = 150)
     venue_category = models.CharField(max_length = 200)
     venue_picture_url = models.CharField(max_length = 250)
-    avg_rating = models.SmallPositiveIntegerField()
+    avg_rating = models.PositiveSmallIntegerField()
     yelp_page_url = models.CharField(max_length = 250)
     # End of venue fields
-    votes = models.SmallPositiveIntegerField(default = 0)
+    votes = models.PositiveSmallIntegerField(default = 0)

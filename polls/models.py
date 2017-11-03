@@ -11,6 +11,7 @@ class Question(models.Model):
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     # The fields below pertain to the restaurant/venue this choice is associated with
+    # Each of these can be obtained using the Yelp Fusion API
     venue_name = models.CharField(max_length = 150)
     venue_category = models.CharField(max_length = 200)
     venue_picture_url = models.CharField(max_length = 250)

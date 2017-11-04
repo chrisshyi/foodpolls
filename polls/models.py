@@ -15,6 +15,8 @@ class Choice(models.Model):
     venue_name = models.CharField(max_length = 150)
     venue_category = models.CharField(max_length = 200)
     venue_picture_url = models.CharField(max_length = 250)
+    # Range of 1 ~ 4, corresponding to Yelp price levels
+    price_range = models.PositiveSmallIntegerField(default = 1)
     avg_rating = models.PositiveSmallIntegerField()
     yelp_page_url = models.CharField(max_length = 250)
     # End of venue fields

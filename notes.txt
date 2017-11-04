@@ -1,0 +1,1 @@
+1. Implemented front page. Still need to fill cards

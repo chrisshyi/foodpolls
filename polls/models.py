@@ -8,6 +8,7 @@ class Question(models.Model):
     # voters is a JSON serialized Python list of strings
     voters = models.CharField(max_length = 200)
     creator_email = models.EmailField(default = '')
+    creator_name = models.CharField(max_length = 30, default='')
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)

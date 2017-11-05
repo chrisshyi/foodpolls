@@ -1,1 +1,4 @@
-1. Implemented front page. Still need to fill cards
+#######
+Step 1. Implemented front page. Still need to fill cards
+#######
+Step 2. Implemented the collection of user info using a form.  

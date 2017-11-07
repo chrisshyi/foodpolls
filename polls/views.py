@@ -13,8 +13,8 @@ def create_poll(request):
             # Store the creator's information in a session variable 
             # so it can be retrieved later
             creator_info = {
-                'creator_name' = form.cleaned_data['creator_name'],
-                'creator_email' = form.cleaned_data['creator_email'],
+                'creator_name': form.cleaned_data['creator_name'],
+                'creator_email': form.cleaned_data['creator_email'],
             }
             request.session['creator_info'] = creator_info
             return redirect()

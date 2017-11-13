@@ -37,6 +37,19 @@
     <div class="container">
         {% block content %}
         {% endblock %}
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+              <div {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %} class="alert alert-success"
+                   {% else %} class="alert alert-warning"
+                   {% endif %} role="alert">
+                   {{ message }}
+              </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
     </div>
     
 </body>

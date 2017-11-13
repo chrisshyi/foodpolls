@@ -9,6 +9,10 @@ class Question(models.Model):
     voters = models.CharField(max_length = 200)
     creator_email = models.EmailField(default = '')
     creator_name = models.CharField(max_length = 30, default='')
+    
+    def __str__(self):
+        return "{} created by {} on {}".format(self.question_text, self.creator_name, str(self.pub_date))
+
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)

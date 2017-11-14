@@ -1,0 +1,26 @@
+{% extends 'polls/base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container" style="padding-top: 20px">
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-4 col-sm-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+                </div> 
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Near..." aria-label="Near...">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button">Go!</button>
+                    </span>
+                </div> 
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock %}

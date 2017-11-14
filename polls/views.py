@@ -41,10 +41,13 @@ def create_question(request):
             new_question.voters = ''
             new_question.save()
             #TODO: Remove index placeholder when next piece is implemented
-            return redirect('index')
+            return redirect('choices_search')
         else:
             # Add error message
             messages.error(request, 'Invalid information entered')
     else:
         form = QuestionInfoForm()
     return render(request, 'polls/create_question.html', {'form': form})
+
+def choices_search(request):
+    return render(request, 'polls/choices_search.html')

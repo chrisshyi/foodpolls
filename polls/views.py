@@ -56,4 +56,4 @@ def choices_search(request):
 def populate_search_box(request):
     search_data = json.loads(request.body)
     print(search_data)
-    return HttpResponse(search_data)
+    return HttpResponse(json.dumps(search_data))

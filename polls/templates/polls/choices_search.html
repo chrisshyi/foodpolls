@@ -5,12 +5,12 @@
         <div class="row justify-content-center">
             <div class="col-lg-4 col-md-4 col-sm-8">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+                    <input id="search-term" type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
                 </div> 
             </div>
             <div class="col-lg-4 col-md-4 col-sm-8">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Near..." aria-label="Near...">
+                    <input id="search-city" type="text" class="form-control" placeholder="Near..." aria-label="Near...">
                     <span class="input-group-btn">
                         <button class="btn btn-primary" type="button">Go!</button>
                     </span>
@@ -18,9 +18,33 @@
             </div>
         </div>
     </div>
+{% endblock %}
 
+{% block scripts %}
+    <script>
+        let search_term = document.getElementById("search-term");
+        let city = document.getElementById("search-city");
+        let csrf_token = Cookies.get('csrftoken');
 
+        search_term.addEventListener("input", function() {
+            let search_data = {
+                "search_term": search_term.value,
+                "city": city.value,
+            }
 
+            let httpRequest = new XMLHttpRequest();
+            httpRequest.onreadystatechange = populate_with_response;
+            httpRequest.open('POST', '/populate_search_box', true);
+            httpRequest.setRequestHeader('Content-Type', 'application/json');
+            httpRequest.setRequestHeader("X-CSRFToken", csrf_token);
+            httpRequest.send(JSON.stringify(search_data));
+        })
 
+        function populate_with_response() {
 
+        }
+    </script>
+{% endblock %}
+
+{% block choice_display %}
 {% endblock %}

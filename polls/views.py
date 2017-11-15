@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from .forms import CreatorInfoForm, QuestionInfoForm
 from datetime import date
 from django.contrib import messages
+import json
 
 # Create your views here.
 def index(request):
@@ -51,3 +52,9 @@ def create_question(request):
 
 def choices_search(request):
     return render(request, 'polls/choices_search.html')
+
+# end point for AJAX request to populate the restaurant search box
+def populate_search_box(request):
+    search_data = json.loads(request.body)
+    print(search_data)
+    return HttpResponse(search_data)

@@ -4,6 +4,7 @@ from .forms import CreatorInfoForm, QuestionInfoForm
 from datetime import date
 from django.contrib import messages
 import json
+import requests
 
 # Create your views here.
 def index(request):
@@ -13,7 +14,6 @@ def create_poll(request):
     if request.method == 'POST':
         form = CreatorInfoForm(request.POST)
         if form.is_valid():
-            # TODO: Where to redirect the user so he/she can create the question?
             # Store the creator's information in a session variable 
             # so it can be retrieved later
             creator_info = {
@@ -41,10 +41,8 @@ def create_question(request):
             
             new_question.voters = ''
             new_question.save()
-            #TODO: Remove index placeholder when next piece is implemented
             return redirect('choices_search')
         else:
-            # Add error message
             messages.error(request, 'Invalid information entered')
     else:
         form = QuestionInfoForm()
@@ -54,6 +52,7 @@ def choices_search(request):
     return render(request, 'polls/choices_search.html')
 
 # end point for AJAX request to populate the restaurant search box
+# TODO: needs to be implemented, make calls to the Yelp Fusion API using requests
 def populate_search_box(request):
     search_data = json.loads(request.body)
     print(search_data)

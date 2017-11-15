@@ -26,7 +26,9 @@ SECRET_KEY = 'm4$$qoz*f=&s4kmxx(pmwza%hl(98&#ba230tz1%$*--n*ih24'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+# Be sure to add those to Heroku when deploying
+YELP_CLIENT_ID = os.environ['yelp_client_id']
+YELP_CLIENT_SECRET = os.environ['yelp_client_secret']
 
 # Application definition
 

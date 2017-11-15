@@ -5,3 +5,5 @@ TODO:
     Needs to be filled in
 ##########
 3. Use template inheritance for choices, since the search box always needs to be on top
+##########
+4. Add environment variables for Yelp when deploying on Heroku

@@ -5,6 +5,7 @@ from datetime import date
 from django.contrib import messages
 import json
 import requests
+from django.conf import settings
 
 # Create your views here.
 def index(request):
@@ -55,5 +56,33 @@ def choices_search(request):
 # TODO: needs to be implemented, make calls to the Yelp Fusion API using requests
 def populate_search_box(request):
     search_data = json.loads(request.body)
-    print(search_data)
+
+    search_term = search_data['search_term']
+    city = search_data['city']
+    # search_data is a Python dictionary
+    # print(search_data)
+    # print(type(search_data))
+    yelp_data = {
+        "grant_type":"client_credentials",
+        "client_id": settings.YELP_CLIENT_ID,
+        "client_secret": settings.YELP_CLIENT_SECRET,
+    }
+    yelp_auth_response = requests.post("https://api.yelp.com/oauth2/token", yelp_data).json()
+    
+    yelp_token = yelp_auth_response['access_token']
+    token_type = yelp_auth_response['token_type']
+
+    token_string = token_type + " " + yelp_token 
+
+    headers = {'Authorization': token_string}
+    params = {
+        'term': search_term,
+        'location': city,
+        'limit': 5,
+    }
+    print(city)
+    yelp_search_response = requests.get('https://api.yelp.com/v3/businesses/search', headers=headers, params=params).json()
+
+    for key, val in yelp_search_response.items():
+        print(key, val)
     return HttpResponse(json.dumps(search_data))

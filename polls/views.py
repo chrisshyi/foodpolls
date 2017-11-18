@@ -62,6 +62,19 @@ def populate_search_box(request):
     # search_data is a Python dictionary
     # print(search_data)
     # print(type(search_data))
+
+    headers = {'Authorization': yelp_authenticate()}
+    params = {
+        'term': search_term,
+        'location': city,
+        'limit': 10,
+    }
+    print(city)
+    yelp_search_response = requests.get('https://api.yelp.com/v3/businesses/search', headers=headers, params=params).json()
+
+    return HttpResponse(json.dumps(yelp_search_response))
+
+def yelp_authenticate():
     yelp_data = {
         "grant_type":"client_credentials",
         "client_id": settings.YELP_CLIENT_ID,
@@ -73,16 +86,5 @@ def populate_search_box(request):
     token_type = yelp_auth_response['token_type']
 
     token_string = token_type + " " + yelp_token 
+    return token_string
 
-    headers = {'Authorization': token_string}
-    params = {
-        'term': search_term,
-        'location': city,
-        'limit': 5,
-    }
-    print(city)
-    yelp_search_response = requests.get('https://api.yelp.com/v3/businesses/search', headers=headers, params=params).json()
-
-    for key, val in yelp_search_response.items():
-        print(key, val)
-    return HttpResponse(json.dumps(search_data))

@@ -12,30 +12,35 @@
                 <div class="input-group">
                     <input id="search-city" type="text" class="form-control" placeholder="Near..." aria-label="Near...">
                     <span class="input-group-btn">
-                        <button class="btn btn-primary" type="button">Go!</button>
+                        <button id="search-btn" class="btn btn-primary" type="button">Go!</button>
                     </span>
                 </div> 
             </div>
         </div>
-        {% comment %} For testing only {% endcomment %}
-        <p id="ajax-test"></p>
-    </div>
-{% endblock %}
+        <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-8">
+                <ul id="business_listings" class="list-unstyled">
 
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+{% endblock %}
 {% block scripts %}
     <script>
         let search_term = document.getElementById("search-term");
         let city = document.getElementById("search-city");
         let csrf_token = Cookies.get('csrftoken');
-        let test_p = document.getElementById("ajax-test");
         var httpRequest;
+        let response;
 
-        search_term.addEventListener("input", function() {
+
+        document.getElementById("search-btn").addEventListener("click", function() {
             let search_data = {
                 "search_term": search_term.value,
                 "city": city.value,
             }
-
             httpRequest = new XMLHttpRequest();
             httpRequest.onreadystatechange = populate_with_response;
             httpRequest.open('POST', '/populate_search_box', true);
@@ -44,18 +49,63 @@
             httpRequest.send(JSON.stringify(search_data));
         })
 
+        
         function populate_with_response() {
-            /* Dummy function for now */
-            
+            /* To be implemented */
+            let business_listings = document.getElementById("business_listings");
             if (httpRequest.readyState === XMLHttpRequest.DONE) {
                 if (httpRequest.status === 200) {
-                  var response = httpRequest.responseText;
-                  test_p.innerText = response;
-                } else {
-                  alert('There was a problem with the request.');
+                    response = JSON.parse(httpRequest.responseText);
+                    for (let i = 0; i < response['businesses'].length; i++) {
+                        let business = response['businesses'][i];
+                        business_listings.appendChild(create_new_listing(business));
+                    }
+                }
+                else {
+                    alert('There was a problem with the request.');
                 }
             }
         }
+
+        /* business is a JavaScript object from the object array returned by the Yelp API */
+        /* Returns a new li element with the business's information */
+        function create_new_listing(business) {
+            var new_li = document.createElement("li");
+            new_li.classList.add("media");
+
+            var li_image = document.createElement("img");
+            li_image.setAttribute("src", business['image_url']);
+            li_image.classList.add("mr-3");
+            new_li.appendChild(li_image);
+
+            var li_body = document.createElement("div");
+            li_body.classList.add("media-body");
+            new_li.appendChild(li_body);
+
+            var media_header = document.createElement("h5");
+            media_header.classList.add("mt-0");
+            media_header.classList.add("mb-1");
+            var name_link = document.createElement("a");
+            name_link.textContent = business['name'];
+            name_link.setAttribute("href", business['url']);
+            media_header.appendChild(name_link);
+            li_body.appendChild(media_header);
+            
+            var rating_and_price = document.createElement("div");
+            let inner_span = document.createElement("span");
+            rating_and_price.appendChild(inner_span);
+            var icon_string
+            for (let i = 0; i < business['rating']; i++) {
+                icon_string += "<i class=\"fa fa-star\" aria-hidden=\"true\"></i>";
+            }
+            icon_string += " ";
+            icon_string += business['price'];
+            inner_span.innerHTML = icon_string;
+            li_body.appendChild(rating_and_price);
+
+            return new_li;
+        }
+        
     </script>
 {% endblock %}
 

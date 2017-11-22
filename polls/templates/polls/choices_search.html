@@ -1,5 +1,9 @@
 {% extends 'polls/base.html' %}
 {% load widget_tweaks %}
+{% load static %}
+{% block stylesheets %}
+    <link href="{% static "polls/css/search.css" %}" rel="stylesheet" type="text/css">
+{% endblock %}
 {% block content %}
     <div class="container" style="padding-top: 20px">
         <div class="row justify-content-center">
@@ -18,7 +22,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-8 col-md-8 col-sm-8">
+            <div class="col-lg-8 col-md-8 col-sm-8 search-results">
                 <ul id="business_listings" class="list-unstyled">
 
                 </ul>
@@ -70,18 +74,22 @@
         /* business is a JavaScript object from the object array returned by the Yelp API */
         /* Returns a new li element with the business's information */
         function create_new_listing(business) {
+            /* The list item */
             var new_li = document.createElement("li");
             new_li.classList.add("media");
-
+            /* The image of the restaurant */
             var li_image = document.createElement("img");
             li_image.setAttribute("src", business['image_url']);
             li_image.classList.add("mr-3");
+            li_image.setAttribute("height", '200px');
+            li_image.setAttribute("width", "200px")
             new_li.appendChild(li_image);
-
+            /* The body of the media listing (Bootstrap) */
             var li_body = document.createElement("div");
             li_body.classList.add("media-body");
             new_li.appendChild(li_body);
 
+            /* The header */
             var media_header = document.createElement("h5");
             media_header.classList.add("mt-0");
             media_header.classList.add("mb-1");
@@ -91,10 +99,11 @@
             media_header.appendChild(name_link);
             li_body.appendChild(media_header);
             
+            /* div containing the rating and price */
             var rating_and_price = document.createElement("div");
             let inner_span = document.createElement("span");
             rating_and_price.appendChild(inner_span);
-            var icon_string
+            var icon_string = '';
             for (let i = 0; i < business['rating']; i++) {
                 icon_string += "<i class=\"fa fa-star\" aria-hidden=\"true\"></i>";
             }

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from .forms import CreatorInfoForm, QuestionInfoForm
 from datetime import date
 from django.contrib import messages
@@ -7,15 +7,16 @@ import json
 import requests
 from django.conf import settings
 
-# Create your views here.
+
 def index(request):
     return render(request, 'polls/index.html')
+
 
 def create_poll(request):
     if request.method == 'POST':
         form = CreatorInfoForm(request.POST)
         if form.is_valid():
-            # Store the creator's information in a session variable 
+            # Store the creator's information in session variables
             # so it can be retrieved later
             creator_info = {
                 'creator_name': form.cleaned_data['creator_name'],
@@ -29,6 +30,7 @@ def create_poll(request):
     else:
         form = CreatorInfoForm()
     return render(request, 'polls/user_info.html',{'form': form})
+
 
 def create_question(request):
     if request.method == 'POST':
@@ -49,19 +51,23 @@ def create_question(request):
         form = QuestionInfoForm()
     return render(request, 'polls/create_question.html', {'form': form})
 
+
 def choices_search(request):
     return render(request, 'polls/choices_search.html')
 
-# end point for AJAX request to populate the restaurant search box
-# TODO: needs to be implemented, make calls to the Yelp Fusion API using requests
+
 def populate_search_box(request):
+    """
+    Populates
+    :param request:
+    :return:
+    """
+
+    # search_data is a Python dictionary
     search_data = json.loads(request.body)
 
     search_term = search_data['search_term']
     city = search_data['city']
-    # search_data is a Python dictionary
-    # print(search_data)
-    # print(type(search_data))
 
     headers = {'Authorization': yelp_authenticate()}
     params = {
@@ -74,9 +80,14 @@ def populate_search_box(request):
 
     return HttpResponse(json.dumps(yelp_search_response))
 
+
 def yelp_authenticate():
+    """
+    Handles authentication when using the Yelp Fusion API
+    :return: token string that is used to access Yelp Fusion API endpoints
+    """
     yelp_data = {
-        "grant_type":"client_credentials",
+        "grant_type": "client_credentials",
         "client_id": settings.YELP_CLIENT_ID,
         "client_secret": settings.YELP_CLIENT_SECRET,
     }

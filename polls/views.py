@@ -29,14 +29,14 @@ def create_poll(request):
 
     else:
         form = CreatorInfoForm()
-    return render(request, 'polls/user_info.html',{'form': form})
+    return render(request, 'polls/user_info.html', {'form': form})
 
 
 def create_question(request):
     if request.method == 'POST':
         form = QuestionInfoForm(request.POST)
         if form.is_valid():
-            new_question = form.save(commit = False)
+            new_question = form.save(commit=False)
             new_question.pub_date = date.today()
             # Populate creator information
             new_question.creator_name = request.session['creator_info']['creator_name']
@@ -56,11 +56,11 @@ def choices_search(request):
     return render(request, 'polls/choices_search.html')
 
 
-def populate_search_box(request):
+def search_for_venues(request):
     """
-    Populates
-    :param request:
-    :return:
+    Searches for venues based on data in the request object, using the Yelp Fusion API
+    :param request: the request object
+    :return: a response encapsulating the Yelp search results
     """
 
     # search_data is a Python dictionary
@@ -75,8 +75,8 @@ def populate_search_box(request):
         'location': city,
         'limit': 10,
     }
-    print(city)
-    yelp_search_response = requests.get('https://api.yelp.com/v3/businesses/search', headers=headers, params=params).json()
+    yelp_search_response = \
+        requests.get('https://api.yelp.com/v3/businesses/search', headers=headers, params=params).json()
 
     return HttpResponse(json.dumps(yelp_search_response))
 
@@ -99,3 +99,19 @@ def yelp_authenticate():
     token_string = token_type + " " + yelp_token 
     return token_string
 
+
+def get_reviews(request):
+    """
+    Retrieves three reviews for a certain venue
+    :param request: the HTTP request
+    :return: a response object encapsulating the reviews
+    """
+
+    business_id = json.loads(request.body)['business_id']
+    # form the request string
+    request_string = "https://api.yelp.com/v3/businesses/{}/reviews".format(business_id)
+    # put authorization tokens in the header
+    headers = {'Authorization': yelp_authenticate()}
+
+    response = requests.get(request_string, headers=headers).json()
+    return HttpResponse(json.dumps(response))

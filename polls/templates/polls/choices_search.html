@@ -36,26 +36,24 @@
         let search_term = document.getElementById("search-term");
         let city = document.getElementById("search-city");
         let csrf_token = Cookies.get('csrftoken');
-        var httpRequest;
+        let httpRequest;
         let response;
-
 
         document.getElementById("search-btn").addEventListener("click", function() {
             let search_data = {
                 "search_term": search_term.value,
                 "city": city.value,
-            }
+            };
             httpRequest = new XMLHttpRequest();
+            httpRequest.open('POST', '/search_for_venues', true);
             httpRequest.onreadystatechange = populate_with_response;
-            httpRequest.open('POST', '/populate_search_box', true);
             httpRequest.setRequestHeader('Content-Type', 'application/json');
             httpRequest.setRequestHeader("X-CSRFToken", csrf_token);
             httpRequest.send(JSON.stringify(search_data));
-        })
+        });
 
         
         function populate_with_response() {
-            /* To be implemented */
             let business_listings = document.getElementById("business_listings");
             if (httpRequest.readyState === XMLHttpRequest.DONE) {
                 if (httpRequest.status === 200) {
@@ -74,6 +72,7 @@
         /* business is a JavaScript object from the object array returned by the Yelp API */
         /* Returns a new li element with the business's information */
         function create_new_listing(business) {
+            let innerHttpRequest;
             /* The list item */
             let new_li = document.createElement("li");
             new_li.classList.add("media");
@@ -85,36 +84,93 @@
             li_image.setAttribute("width", "200px")
             new_li.appendChild(li_image);
             /* The body of the media listing (Bootstrap) */
-            var li_body = document.createElement("div");
+            let li_body = document.createElement("div");
             li_body.classList.add("media-body");
             new_li.appendChild(li_body);
 
-            /* The header */
-            var media_header = document.createElement("h5");
+            /* The header (restaurant name) */
+            let media_header = document.createElement("h5");
             media_header.classList.add("mt-0");
             media_header.classList.add("mb-1");
-            var name_link = document.createElement("a");
+            let name_link = document.createElement("a");
             name_link.textContent = business['name'];
             name_link.setAttribute("href", business['url']);
             media_header.appendChild(name_link);
             li_body.appendChild(media_header);
             
             /* div containing the rating and price */
-            var rating_and_price = document.createElement("div");
+            let rating_and_price = document.createElement("div");
             let inner_span = document.createElement("span");
             rating_and_price.appendChild(inner_span);
-            var icon_string = '';
+            let icon_string = '';
+            /*
+            ** Create a string of stars based on the restaurant's rating
+             */
             for (let i = 0; i < business['rating']; i++) {
                 icon_string += "<i class=\"fa fa-star\" aria-hidden=\"true\"></i>";
             }
             icon_string += " ";
+            /*
+            ** Append the price indicator to the end
+             */
             icon_string += business['price'];
             inner_span.innerHTML = icon_string;
             li_body.appendChild(rating_and_price);
 
+            function get_review_request() {
+                /**
+                 *  Get three reviews from Yelp using an AJAX call
+                 */
+                let search_data = {
+                    "business_id": business['id'],
+                };
+
+                innerHttpRequest = new XMLHttpRequest();
+                innerHttpRequest.open('POST', '/get_reviews', true);
+                innerHttpRequest.onreadystatechange = append_reviews_to_li;
+                innerHttpRequest.setRequestHeader('Content-Type', 'application/json');
+                innerHttpRequest.setRequestHeader("X-CSRFToken", csrf_token);
+                innerHttpRequest.send(JSON.stringify(search_data));
+            }
+
+            function append_reviews_to_li() {
+                /**
+                 * Append the reviews to the list item representing the business listing
+                 */
+                if (innerHttpRequest.readyState === XMLHttpRequest.DONE) {
+                    if (innerHttpRequest.status === 200) {
+                        let innerResponse = JSON.parse(innerHttpRequest.responseText);
+                        /* Create the reviews div */
+                        let reviews = document.createElement("div");
+                        reviews.setAttribute("id", "reviews_div");
+
+                        /* Create a header for the div */
+                        let reviews_header = document.createElement("p");
+                        reviews_header.innerText = "What reviewers say:";
+                        reviews.appendChild(reviews_header);
+
+                        for (let i = 0; i < 3; i++) {
+                            let review = innerResponse['reviews'][i];
+                            let review_entry = document.createElement("p");
+                            let user_name = review['user']['name'];
+                            let review_text = review['text'];
+
+                            review_entry.innerText = `${user_name} : ${review_text}`;
+                            reviews.appendChild(review_entry);
+                        }
+                        li_body.appendChild(reviews);
+                    }
+                    else {
+                        alert('There was a problem with the request.');
+                    }
+                }
+            }
+
+            /* Tried to create another AJAX call to get reviews, didn't work */
+            get_review_request();
+
             return new_li;
         }
-        
     </script>
 {% endblock %}
 

@@ -69,7 +69,7 @@ def search_for_venues(request):
     search_term = search_data['search_term']
     city = search_data['city']
 
-    headers = {'Authorization': yelp_authenticate()}
+    headers = {'Authorization': "Bearer " + settings.YELP_API_KEY}
     params = {
         'term': search_term,
         'location': city,
@@ -92,11 +92,11 @@ def yelp_authenticate():
         "client_secret": settings.YELP_CLIENT_SECRET,
     }
     yelp_auth_response = requests.post("https://api.yelp.com/oauth2/token", yelp_data).json()
-    
+
     yelp_token = yelp_auth_response['access_token']
     token_type = yelp_auth_response['token_type']
 
-    token_string = token_type + " " + yelp_token 
+    token_string = token_type + " " + yelp_token
     return token_string
 
 
@@ -111,7 +111,7 @@ def get_reviews(request):
     # form the request string
     request_string = "https://api.yelp.com/v3/businesses/{}/reviews".format(business_id)
     # put authorization tokens in the header
-    headers = {'Authorization': yelp_authenticate()}
+    headers = {'Authorization': "Bearer " + settings.YELP_API_KEY}
 
     response = requests.get(request_string, headers=headers).json()
     return HttpResponse(json.dumps(response))

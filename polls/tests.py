@@ -1,8 +1,14 @@
 from django.test import TestCase
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait # available since 2.4.0
+from selenium.webdriver.support import expected_conditions as EC # available since 2.26.0
 
 
 class PollCreationTest(TestCase):
+    """
+    Selenium Webdriver test. Make sure the server is running first.
+    """
     url_string = "http://127.0.0.1:8000/"
     driver = webdriver.Chrome()
 
@@ -31,4 +37,14 @@ class PollCreationTest(TestCase):
 
         self.driver.find_element_by_id('search-btn').click()
 
+        element = WebDriverWait(self.driver, 5).\
+            until(EC.presence_of_element_located((By.CLASS_NAME, "mr-3")))
+
+        search_city.clear()
+        search_city.send_keys('Toronto')
+
+        search_term.clear()
+        search_term.send_keys('Electric Mud Ribs')
+
+        self.driver.find_element_by_id('search-btn').click()
 

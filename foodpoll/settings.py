@@ -29,6 +29,7 @@ ALLOWED_HOSTS = []
 # Be sure to add those to Heroku when deploying
 YELP_CLIENT_ID = os.environ['yelp_client_id']
 YELP_CLIENT_SECRET = os.environ['yelp_client_secret']
+YELP_API_KEY = os.environ['yelp_api_key']
 
 # Application definition
 

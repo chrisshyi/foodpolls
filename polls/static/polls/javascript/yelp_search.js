@@ -45,13 +45,13 @@ function create_new_listing(business) {
     let innerHttpRequest;
     /* The list item */
     let new_li = document.createElement("li");
-    new_li.classList.add("media");
+    new_li.classList.add("media", "business-listing");
     /* The image of the restaurant */
     let li_image = document.createElement("img");
     li_image.setAttribute("src", business['image_url']);
     li_image.classList.add("mr-3");
     li_image.setAttribute("height", '200px');
-    li_image.setAttribute("width", "200px")
+    li_image.setAttribute("width", "200px");
     new_li.appendChild(li_image);
     /* The body of the media listing (Bootstrap) */
     let li_body = document.createElement("div");
@@ -62,10 +62,13 @@ function create_new_listing(business) {
     let media_header = document.createElement("h5");
     media_header.classList.add("mt-0");
     media_header.classList.add("mb-1");
+    /* The category for the venue */
     let sub_header = document.createElement("h6");
     sub_header.classList.add("mt-0");
     sub_header.classList.add("mb-1");
     sub_header.innerText = business['categories'][0]['title'];
+    sub_header.classList.add("venue-category");
+
     let name_link = document.createElement("a");
     name_link.textContent = business['name'];
     name_link.setAttribute("href", business['url']);
@@ -75,13 +78,20 @@ function create_new_listing(business) {
 
     /* div containing the rating and price */
     let rating_and_logo = document.createElement("div");
+    rating_and_logo.classList.add("rating-and-image");
     let inner_span = document.createElement("span");
     rating_and_logo.appendChild(inner_span);
+
+    let review_count = document.createElement("p");
+    review_count.classList.add("review-count");
+    review_count.innerText = "Based on " + business['review_count'] + " reviews";
+    rating_and_logo.appendChild(review_count);
+
     let yelp_stars_img = document.createElement("img");
     let img_url = "";
     img_url += "/static/polls/img/yelp/yelp_stars/small/small_";
 
-    yelp_stars_img.setAttribute("class", "yelp_stars");
+    yelp_stars_img.setAttribute("class", "yelp-stars");
     inner_span.appendChild(yelp_stars_img);
 
     let rating = business['rating'];
@@ -97,13 +107,19 @@ function create_new_listing(business) {
     }
     img_url += "@2x.png";
     yelp_stars_img.setAttribute("src", img_url);
+
+
     /*
     ** Add the Yelp image logo
      */
+    let yelp_page_link = document.createElement("a");  /* anchor that links to the listing's Yelp page */
+    yelp_page_link.setAttribute("href", business['url']);
     let yelp_logo = document.createElement("img");
+    yelp_logo.classList.add("yelp-logo");
     yelp_logo.setAttribute("src", "/static/polls/img/yelp/Yelp_trademark_RGB.png");
-    yelp_logo.classList.add("yelp_logo");
-    inner_span.appendChild(yelp_logo);
+    yelp_page_link.appendChild(yelp_logo);
+    inner_span.appendChild(yelp_page_link);
+    /* TODO: Add a "Add to Poll" button for each listing */
     li_body.appendChild(rating_and_logo);
 
     function get_review_request() {
@@ -130,21 +146,33 @@ function create_new_listing(business) {
             if (innerHttpRequest.status === 200) {
                 let innerResponse = JSON.parse(innerHttpRequest.responseText);
                 /* Create the reviews div */
-                let reviews = document.createElement("div");
-                reviews.setAttribute("id", "reviews_div");
-
-                /* Create a header for the div */
-                let reviews_header = document.createElement("p");
-                reviews_header.innerText = "What reviewers say:";
-                reviews.appendChild(reviews_header);
+                let reviews = document.createElement("ul");
+                reviews.setAttribute("id", "reviews_list");
+                reviews.classList.add("list-unstyled");
 
                 for (let i = 0; i < 3; i++) {
                     let review = innerResponse['reviews'][i];
-                    let review_entry = document.createElement("p");
-                    let user_name = review['user']['name'];
-                    let review_text = review['text'];
+                    let review_entry = document.createElement("li");
+                    review_entry.classList.add("media", "review-li");
 
-                    review_entry.innerText = `${user_name} : ${review_text}`;
+
+                    let reviewer_image = document.createElement("img");
+                    reviewer_image.classList.add("mr-3", "reviewer-img");
+                    reviewer_image.setAttribute("src", review['user']['image_url']);
+                    review_entry.appendChild(reviewer_image);
+
+                    let review_entry_body = document.createElement("div");
+                    review_entry_body.classList.add("media-body", "review-body");
+                    review_entry.appendChild(review_entry_body);
+
+                    // let review_text = document.createElement("p");
+                    let review_link = document.createElement("a");
+                    review_link.classList.add("review-link");
+                    review_link.innerText = "Read More";
+                    review_link.setAttribute("href", review['url']);
+
+                    review_entry_body.innerText = review['text'];
+                    review_entry_body.appendChild(review_link);
                     reviews.appendChild(review_entry);
                 }
                 li_body.appendChild(reviews);

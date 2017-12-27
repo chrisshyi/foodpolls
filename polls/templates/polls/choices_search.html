@@ -5,7 +5,9 @@
     <link href="{% static "polls/css/search.css" %}" rel="stylesheet" type="text/css">
 {% endblock %}
 {% block content %}
-    <div class="container" style="padding-top: 20px">
+    <div class="search-container">
+        <!-- TODO: Fix the search boxes and search button to the top -->
+        <!-- TODO: Fix transparency issues when fixing the search boxes to the top-->
         <div class="row justify-content-center">
             <div class="col-lg-4 col-md-4 col-sm-8">
                 <div class="input-group">
@@ -29,7 +31,6 @@
             </div>
         </div>
     </div>
-    <div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
 {% endblock %}
 {% block scripts %}
     <script src="{% static "polls/javascript/yelp_search.js" %}"></script>

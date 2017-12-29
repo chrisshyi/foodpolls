@@ -66,6 +66,8 @@ def search_for_venues(request):
     # search_data is a Python dictionary
     search_data = json.loads(request.body)
 
+    optional_params = ['categories', 'price', 'sort_by']
+
     search_term = search_data['search_term']
     city = search_data['city']
 
@@ -73,31 +75,39 @@ def search_for_venues(request):
     params = {
         'term': search_term,
         'location': city,
-        'limit': 10,
+        'limit': 25,
     }
+    # Add optional parameters only if they're in the AJAX request
+    for param in optional_params:
+        if param in search_data:
+            params[param] = search_data[param]
+
     yelp_search_response = \
         requests.get('https://api.yelp.com/v3/businesses/search', headers=headers, params=params).json()
 
     return HttpResponse(json.dumps(yelp_search_response))
 
 
-def yelp_authenticate():
-    """
-    Handles authentication when using the Yelp Fusion API
-    :return: token string that is used to access Yelp Fusion API endpoints
-    """
-    yelp_data = {
-        "grant_type": "client_credentials",
-        "client_id": settings.YELP_CLIENT_ID,
-        "client_secret": settings.YELP_CLIENT_SECRET,
-    }
-    yelp_auth_response = requests.post("https://api.yelp.com/oauth2/token", yelp_data).json()
-
-    yelp_token = yelp_auth_response['access_token']
-    token_type = yelp_auth_response['token_type']
-
-    token_string = token_type + " " + yelp_token
-    return token_string
+"""
+Old way of authenticating deprecated by Yelp
+"""
+# def yelp_authenticate():
+#     """
+#     Handles authentication when using the Yelp Fusion API
+#     :return: token string that is used to access Yelp Fusion API endpoints
+#     """
+#     yelp_data = {
+#         "grant_type": "client_credentials",
+#         "client_id": settings.YELP_CLIENT_ID,
+#         "client_secret": settings.YELP_CLIENT_SECRET,
+#     }
+#     yelp_auth_response = requests.post("https://api.yelp.com/oauth2/token", yelp_data).json()
+#
+#     yelp_token = yelp_auth_response['access_token']
+#     token_type = yelp_auth_response['token_type']
+#
+#     token_string = token_type + " " + yelp_token
+#     return token_string
 
 
 def get_reviews(request):

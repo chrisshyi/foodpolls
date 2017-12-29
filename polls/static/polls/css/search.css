@@ -1,7 +1,5 @@
 .search-results {
     margin-top: 35px;
-    margin-left: 15%;
-    margin-right: 15%;
     width: 60%;
 }
 
@@ -18,6 +16,7 @@
     color: grey;
     margin-bottom: 3px;
     margin-top: -10px;
+    font-size: small;
 }
 
 .venue-category {

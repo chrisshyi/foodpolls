@@ -6,11 +6,40 @@ let response;
 /**
  * Maps the display name of a category (string) to its alias (string, used for Yelp API calls)
  */
-let category_map = {};
+let category_map = new Map();
+let selected_categories = new Map();
 
+/* Add click event listener for the search button */
 document.getElementById("search-btn").addEventListener("click", function() {
-    make_search_request(search_term.value, city.value)
+    if (search_term.value !== "" && city.value !== "") {
+        category_map.clear();
+        selected_categories.clear();
+        make_search_request(search_term.value, city.value)
+    }
 });
+
+
+/* Add click event listener for the select button in the categories pop-up window */
+document.getElementById("select-category-btn").addEventListener("click", function() {
+    let checkboxes = document.getElementsByClassName("pop-up-input");
+    /* clear the selected_categories map */
+    selected_categories.clear();
+    for (let checkbox of checkboxes) {
+        if (checkbox.checked === true) {
+            selected_categories.set(checkbox.value, category_map.get(checkbox.value));
+        }
+    }   
+    
+    /* Refresh the categories display on the main page */
+    let categories_div = document.getElementById("categories-div");
+    /* Clear what was in the categories div before */
+    categories_div.innerHTML = "";
+    generate_category_filters(categories_div);
+    
+
+    $('#category-modal').modal('toggle');
+});
+
 
 /**
  * Make an AJAX request to the server for restaurant data based on search parameters
@@ -39,12 +68,12 @@ function make_search_request(search_term, city, categories="", price="", sort_by
     /*
     ** Clear the business listings in a search had been done previously
      */
-    let business_listings = document.getElementById("business_listings");
-    business_listings.innerHTML = "";
+    document.getElementById("business_listings").innerHTML = "";
     /* clear the filter and sort by options from the side */
     document.getElementById("price-div").innerHTML = "";
     document.getElementById("categories-div").innerHTML = "";
     document.getElementById("sort-by").innerHTML = "";
+
     httpRequest = new XMLHttpRequest();
     httpRequest.open('POST', '/search_for_venues', true);
     httpRequest.onreadystatechange = populate_with_response;
@@ -80,7 +109,7 @@ function populate_with_response() {
 function create_new_listing(business) {
     for (let i = 0; i < business['categories'].length; i++) {
         let category = business['categories'][i];
-        category_map[category['title']] = category['alias'];
+        category_map.set(category['title'], category['alias']);
     }
     let innerHttpRequest;
     /* The list item */
@@ -239,7 +268,45 @@ function create_new_listing(business) {
 /**
  * Renders a pop up window with category check boxes that the user can use to filter listings
  */
-function render_category_set() {
+function render_category_popup() {
+    let category_col_one = document.getElementById("category-col-one");
+    let category_col_two = document.getElementById("category-col-two");
+
+    /* wipe clean the previous records */
+    category_col_one.innerHTML = "";
+    category_col_two.innerHTML = "";
+
+    let category_key_iter = category_map.keys();
+    let mid_index = Math.floor(category_map.size / 2);
+    let input_div;
+    for (let i = 0; i < category_map.size; i++) {
+        let category_key = category_key_iter.next().value;
+        input_div = document.createElement("div");
+        input_div.classList.add("form-check");
+
+        let input_elem = document.createElement("input");
+        input_elem.classList.add("form-check-input", "pop-up-input");
+        input_elem.setAttribute("type", "checkbox");
+        input_elem.setAttribute("value", category_key);
+        input_elem.setAttribute("id", "pop-up-check" + i);
+        input_elem.value = category_key;
+        if (selected_categories.has(category_key)) {
+            input_elem.checked = true;
+        }
+        input_div.appendChild(input_elem);
+
+        let input_label = document.createElement("label");
+        input_label.classList.add("form-check-label");
+        input_label.setAttribute("for", "pop-up-check" + i);
+        input_label.innerText = category_key;
+        input_div.appendChild(input_label);
+
+        if (i < mid_index) {
+            category_col_one.appendChild(input_div);
+        } else {
+            category_col_two.appendChild(input_div);
+        }
+    }
 
 }
 
@@ -249,6 +316,7 @@ function render_category_set() {
 function render_filter_and_sort_options() {
     let price_div = document.getElementById("price-div");
     let categories_div = document.getElementById("categories-div");
+    document.getElementById("filter-header").innerText = "Filters";
     generate_category_filters(categories_div);
     generate_price_filter(price_div);
 }
@@ -258,7 +326,7 @@ function render_filter_and_sort_options() {
  * @param price_div: the Bootstrap column for price filters
  */
 function generate_price_filter(price_div) {
-    let header = document.createElement("h5");
+    let header = document.createElement("h6");
     header.innerText = "Price";
     price_div.appendChild(header);
 
@@ -291,20 +359,34 @@ function generate_price_filter(price_div) {
  * @param category_div: the div element for the filter form
  */
 function generate_category_filters(category_div) {
-    let header = document.createElement("h5");
+    let header = document.createElement("h6");
     header.innerText = "Categories";
     category_div.appendChild(header);
 
-    let category_keys = Object.keys(category_map);
+    let category_key_iter = category_map.keys();
     let category_form = document.createElement("form");
     category_div.appendChild(category_form);
+    let selected_keys_iter;
+    /* 
+     * Keep track of what's already rendered to avoid duplicates when 
+     * generating items randomly
+     */
+    let rendered_categories = new Set();
+    if (selected_categories.size > 0) {
+        selected_keys_iter = selected_categories.keys();
+    }
 
     for (let i = 0; i < 4; i++) {
+        /* If more than 4 categories exist, render a link */
         if (i === 3 && category_map.size > 4) {
             let more_link = document.createElement("a");
             more_link.classList.add("more-link");
             more_link.setAttribute("href", "javascript:;");
             more_link.innerText = "More Categories";
+            more_link.addEventListener("click", function() {
+                render_category_popup();
+                $('#category-modal').modal('toggle')
+            });
             category_div.appendChild(more_link);
             break;
         }
@@ -315,13 +397,39 @@ function generate_category_filters(category_div) {
         input_elem.classList.add("form-check-input");
         input_elem.setAttribute("type", "checkbox");
         input_elem.id = "category-check-" + (i + 1);
+        
+        let selected_val;
+        let random_category;
+        if (typeof(selected_keys_iter) !== "undefined") {
+            let next_item = selected_keys_iter.next();
+            if (!next_item.done) {
+                selected_val = next_item.value;
+            }
+        }
+
+        if (typeof(selected_val) !== "undefined") {
+            input_elem.value = selected_val;
+            input_elem.checked = true;
+        } else {
+            do {
+                random_category = category_key_iter.next().value;
+            } while (rendered_categories.has(random_category));
+            input_elem.value = random_category;
+            input_elem.checked = false;
+        }
+        rendered_categories.add(input_elem.value);
         input_div.appendChild(input_elem);
+
 
         let input_label = document.createElement("label");
         input_label.classList.add("form-check-label");
         input_label.setAttribute("for", input_elem.id);
         // PyCharm warning here, ignore
-        input_label.innerText = category_keys[i];
+        if (typeof(selected_val) !== "undefined") {
+            input_label.innerText = selected_val;
+        } else {
+            input_label.innerText = random_category;
+        }
         input_div.appendChild(input_label);
 
         category_form.appendChild(input_div);

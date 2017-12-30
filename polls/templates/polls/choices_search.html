@@ -1,61 +1,85 @@
-{% extends 'polls/base.html' %}
-{% load widget_tweaks %}
-{% load static %}
+{% extends 'polls/base.html' %} 
+{% load widget_tweaks %} 
+{% load static %} 
 {% block stylesheets %}
-    <link href="{% static "polls/css/search.css" %}" rel="stylesheet" type="text/css">
-{% endblock %}
-{% block content %}
-    <div class="search-container">
-        <!-- TODO: Fix the search boxes and search button to the top -->
-        <!-- TODO: Fix transparency issues when fixing the search boxes to the top-->
-        <div class="row justify-content-center">
-            <div class="col-lg-4 col-md-4 col-sm-4">
-                <div class="input-group">
-                    <input id="search-term" type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
-                </div> 
+<link href="{% static "polls/css/search.css" %}" rel="stylesheet" type="text/css"> 
+{% endblock %} 
+{% block modal %}
+<div class="modal fade" id="category-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="category-modal-label">Categories</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="col-lg-4 col-md-4 col-sm-4">
-                <div class="input-group">
-                    <input id="search-city" type="text" class="form-control" placeholder="Near..." aria-label="Near...">
-                    <span class="input-group-btn">
-                        <button id="search-btn" class="btn btn-primary" type="button">Go!</button>
-                    </span>
-                </div> 
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-2 col-md-2 col-sm-2" id="search-filter-container">
-                <!-- this row is for filtering by price/categories -->
+            <div class="modal-body">
                 <div class="row">
-                    <!-- price filter options -->
-                    <div class="col-lg-5 col-md-5 col-sm-5" id="price-div">
+                    <div class="col-lg-6 col-md-6 col-sm-6" id="category-col-one">
 
                     </div>
-                    <!-- category filter options -->
-                    <div class="col-lg-5 col-md-5 col-sm-5" id="categories-div">
-
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-5 col-md-5 col-sm-5" id="sort-by">
+                    <div class="col-lg-6 col-md-6 col-sm-6" id="category-col-two">
 
                     </div>
                 </div>
             </div>
-            <div class="col-lg-8 col-md-8 col-sm-8 search-results">
-                <ul id="business_listings" class="list-unstyled">
-
-                </ul>
-            </div>
-
-            <div class="col-lg-2 col-md-2 col-sm-2" id="search-google-map">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="select-category-btn">Select</button>
             </div>
         </div>
     </div>
-{% endblock %}
-{% block scripts %}
-    <script src="{% static "polls/javascript/yelp_search.js" %}"></script>
-{% endblock %}
+</div>
+{% endblock %} 
+{% block content %}
+<div class="search-container">
+    <!-- TODO: Fix the search boxes and search button to the top -->
+    <!-- TODO: Fix transparency issues when fixing the search boxes to the top-->
+    <div class="row justify-content-center">
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <div class="input-group">
+                <input id="search-term" type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <div class="input-group">
+                <input id="search-city" type="text" class="form-control" placeholder="Near..." aria-label="Near...">
+                <span class="input-group-btn">
+                    <button id="search-btn" class="btn btn-primary" type="button">Go!</button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="row main-content">
+        <div class="col-lg-2 col-md-2 col-sm-2" id="search-filter-container">
+            <h4 id="filter-header"></h4>
+            <!-- price filter options -->
+            <div class="container" id="price-div">
 
-{% block choice_display %}
+            </div>
+            <!-- category filter options -->
+            <div class="container" id="categories-div">
+
+            </div>
+            <!-- sorting options -->
+            <div class="container" id="sort-by">
+
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-8 col-sm-8 search-results">
+            <ul id="business_listings" class="list-unstyled">
+
+            </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-2 col-sm-2" id="search-google-map">
+        </div>
+    </div>
+</div>
+{% endblock %} 
+{% block scripts %}
+<script src="{% static "polls/javascript/yelp_search.js" %}"></script> 
+{% endblock %} 
+{% block choice_display %} 
 {% endblock %}

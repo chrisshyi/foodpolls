@@ -1,6 +1,7 @@
 .search-results {
     margin-top: 35px;
-    width: 60%;
+    margin-left: 15%;
+
 }
 
 .yelp-logo {
@@ -56,4 +57,43 @@
 img.mr-3 {
     padding: 0;
     border-radius: 15%;
+}
+
+#search-filter-container {
+    /* margin-left: -12%;
+    margin-right: 12%; */
+    margin-top: 1.5%;
+    font-size: 0.9em;
+    position: fixed;
+    left: 2%;
+}
+
+div#price-div {
+    margin-right: 15%;
+    margin-top: 0;
+}
+
+div#categories-div {
+    margin-left: 1%;
+}
+
+label.form-check-label {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.row.main-content {
+    width: 100%;
+}
+
+#filter-header {
+    text-align: center;
+}
+
+#category-col-one {
+    padding: 10%;
+}
+
+#category-col-two {
+    padding: 10%;
 }

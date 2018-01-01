@@ -73,6 +73,8 @@ function make_search_request(search_term, city, categories="", price="", sort_by
     document.getElementById("price-div").innerHTML = "";
     document.getElementById("categories-div").innerHTML = "";
     document.getElementById("sort-by").innerHTML = "";
+    document.getElementById("filter-header").innerText = "";
+    document.getElementById("sort-by").innerHTML = "";
 
     httpRequest = new XMLHttpRequest();
     httpRequest.open('POST', '/search_for_venues', true);
@@ -95,6 +97,7 @@ function populate_with_response() {
                 business_listings.appendChild(create_new_listing(business));
             }
             render_filter_and_sort_options();
+            
         }
         else {
             alert('There was a problem with the request.');
@@ -316,9 +319,11 @@ function render_category_popup() {
 function render_filter_and_sort_options() {
     let price_div = document.getElementById("price-div");
     let categories_div = document.getElementById("categories-div");
+    let sort_by_div = document.getElementById("sort-by");
     document.getElementById("filter-header").innerText = "Filters";
     generate_category_filters(categories_div);
     generate_price_filter(price_div);
+    renderSortByOptions(sort_by_div);
 }
 
 /**
@@ -435,4 +440,63 @@ function generate_category_filters(category_div) {
         category_form.appendChild(input_div);
 
     }
+}
+
+/**
+ * Creates and returns a new DOM element
+ * @param {string} type:  the element type (HTML tag)
+ * @param {Array} elemClasses: classes for the new element
+ * @param {Map} elemAttributes: other attributes 
+ * @returns the newly created DOM element
+ */
+function createNewElement(type, elemClasses=[], elemAttributes=new Map()) {
+    let newElement = document.createElement(type);
+    if (elemClasses.length !== 0) {
+        newElement.classList.add(...elemClasses);
+    }
+    if (elemAttributes.size !== 0) {
+        for (let [key, value] of elemAttributes) {
+            newElement.setAttribute(key, value);
+        }
+    }
+    return newElement;
+}
+
+/**
+ * Renders the sort-by options on the left sidebar
+ * @param {*} sortByDiv: the Bootstrap column for the sort-by options 
+ */
+function renderSortByOptions(sortByDiv) {
+    let sortByHeader = createNewElement("h6");
+    sortByHeader.innerText = "Sort By";
+    sortByDiv.appendChild(sortByHeader);
+
+    let sortOptions = new Map();
+    sortOptions.set("Best Match", "best_match");
+    sortOptions.set("Highest Rating", "rating");
+    sortOptions.set("Most Reviewed", "review_count");
+    
+    let counter = 1;
+    for (let [key, value] of sortOptions) {
+        let inputDiv = createNewElement("div", ["form-check"]);
+
+        let inputAttributes = new Map();
+        inputAttributes.set("type", "radio");
+        inputAttributes.set("name", "sortByOption");
+        inputAttributes.set("id", "sortByOption" + counter);
+        inputAttributes.set("value", value);
+        let inputElem = createNewElement("input", ["form-check-input"], inputAttributes);
+        inputDiv.appendChild(inputElem);
+
+        labelAttributes = new Map();
+        labelAttributes.set("for", "sortByOption" + counter);
+        let inputLabel = createNewElement("label", ["form-check-label"], labelAttributes);
+        inputLabel.innerText = key;
+        inputDiv.appendChild(inputLabel);
+
+        sortByDiv.appendChild(inputDiv);
+
+        counter++;
+    }
+
 }

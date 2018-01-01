@@ -52,7 +52,7 @@
         </div>
     </div>
     <div class="row main-content">
-        <div class="col-lg-2 col-md-2 col-sm-2" id="search-filter-container">
+        <div class="col-lg-2 col-md-2 col-sm-12" id="search-filter-container">
             <h4 id="filter-header"></h4>
             <!-- price filter options -->
             <div class="container" id="price-div">
@@ -67,19 +67,19 @@
 
             </div>
         </div>
-        <div class="col-lg-8 col-md-8 col-sm-8 search-results">
+        <div class="col-lg-8 col-md-8 col-sm-12 search-results">
             <ul id="business_listings" class="list-unstyled">
 
             </ul>
         </div>
 
-        <div class="col-lg-2 col-md-2 col-sm-2" id="search-google-map">
+        <div class="col-lg-2 col-md-2 col-sm-12" id="search-google-map">
         </div>
     </div>
 </div>
 {% endblock %} 
 {% block scripts %}
-<script src="{% static "polls/javascript/yelp_search.js" %}"></script> 
+<script src="{% static "polls/scripts/javascript/yelp_search.js" %}"></script> 
 {% endblock %} 
 {% block choice_display %} 
 {% endblock %}

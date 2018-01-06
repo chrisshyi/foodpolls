@@ -108,6 +108,7 @@ function populateWithResponse() {
 /**
  * Returns a new li element with the business's information rendered
  * @param business: a JavaScript object from the businesses array returned by the Yelp API
+ * @return a new <li> element with Yelp data about the business of interest
  */
 function createNewListing(business) {
     for (let i = 0; i < business['categories'].length; i++) {

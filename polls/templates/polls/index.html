@@ -1,4 +1,8 @@
 {% extends 'polls/base.html' %} 
+{% load static %}
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{% static "polls/css/index.css" %}">
+{% endblock %}
 {% block content %}
 <div class="row">
     <div class="col">
@@ -14,24 +18,24 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-sm-4">
-        <div class="card" style="width: 20rem;">
+    <div class="col-lg-4 col-md-4 col-sm-12">
+        <div class="card">
             <div class="card-body">
               <h4 class="card-title">Do I need to sign up?</h4>
               <p class="card-text">Nope! Create a poll and invite people with a link</p>
             </div>
           </div>
     </div>
-    <div class="col-sm-4">
-        <div class="card" style="width: 20rem;">
+    <div class="col-lg-4 col-md-4 col-sm-12">
+        <div class="card">
             <div class="card-body">
               <h4 class="card-title">Why should I use this app?</h4>
               <p class="card-text">Yelp integration!</p>
             </div>
           </div>
     </div>
-    <div class="col-sm-4">
-        <div class="card" style="width: 20rem;">
+    <div class="col-lg-4 col-md-4 col-sm-12">
+        <div class="card">
             <div class="card-body">
               <h4 class="card-title">Card title</h4>
               <p class="card-text">Dummy text Lorem Ipsum</p>

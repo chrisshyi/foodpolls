@@ -36,13 +36,13 @@
 <div class="search-container">
     <!-- TODO: Fix the search boxes and search button to the top -->
     <!-- TODO: Fix transparency issues when fixing the search boxes to the top-->
-    <div class="row justify-content-center">
-        <div class="col-lg-4 col-md-4 col-sm-4">
+    <div class="row justify-content-center" id="search-row">
+        <div class="col-6 col-sm-4">
             <div class="input-group">
                 <input id="search-term" type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
             </div>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-4">
+        <div class="col-6 col-sm-4">
             <div class="input-group">
                 <input id="search-city" type="text" class="form-control" placeholder="Near..." aria-label="Near...">
                 <span class="input-group-btn">
@@ -51,9 +51,29 @@
             </div>
         </div>
     </div>
+    <div class="row" id="filter-button-row">
+        <div class="col-6" id="filter-button-col">
+            <button type="button" class="btn btn-outline-info">
+                Filters
+            </button>
+        </div>
+    </div>
+    <div class="container justify-content-center">
+        <div class="row" id="filter-dropdown-row">
+            <div class="col-4" id="filter-categories-col">
+
+            </div>
+            <div class="col-4" id="filter-price-col">
+
+            </div>
+            <div class="col-4" id="sort-by-col">
+
+            </div>
+        </div>
+    </div>
+
     <div class="row main-content">
         <div class="col-lg-2 col-md-2 col-sm-12" id="search-filter-container">
-            <h4 id="filter-header"></h4>
             <!-- price filter options -->
             <div class="container" id="price-div">
 

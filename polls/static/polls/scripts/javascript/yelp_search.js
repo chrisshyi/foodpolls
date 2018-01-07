@@ -18,7 +18,6 @@ document.getElementById("search-btn").addEventListener("click", function() {
     }
 });
 
-
 /* Add click event listener for the select button in the categories pop-up window */
 document.getElementById("select-category-btn").addEventListener("click", function() {
     let checkboxes = document.getElementsByClassName("pop-up-input");
@@ -73,7 +72,6 @@ function makeSearchRequest(searchTerm, city, categories="", price="", sortBy="")
     document.getElementById("price-div").innerHTML = "";
     document.getElementById("categories-div").innerHTML = "";
     document.getElementById("sort-by").innerHTML = "";
-    document.getElementById("filter-header").innerText = "";
     document.getElementById("sort-by").innerHTML = "";
 
     httpRequest = new XMLHttpRequest();
@@ -121,10 +119,13 @@ function createNewListing(business) {
     newLi.classList.add("media", "business-listing");
     /* The image of the restaurant */
     let liImage = document.createElement("img");
+    liImage.setAttribute("width", "1000");
+    liImage.setAttribute("height", "1000");
     liImage.setAttribute("src", business['image_url']);
-    liImage.classList.add("mr-3");
-    liImage.setAttribute("height", '200px');
-    liImage.setAttribute("width", "200px");
+    liImage.classList.add("mr-3", "business-image");
+    // liImage.setAttribute("sizes", "(max-width: 380px) 60px, 200px");
+    // liImage.setAttribute("height", '200px');
+    // liImage.setAttribute("width", "200px");
     newLi.appendChild(liImage);
     /* The body of the media listing (Bootstrap) */
     let liBody = document.createElement("div");
@@ -239,6 +240,8 @@ function createNewListing(business) {
                     reviewerImage.classList.add("mr-3", "reviewer-img");
                     let srcUrlList = review['user']['image_url'];
                     reviewerImage.setAttribute("src", srcUrlList);
+                    reviewerImage.setAttribute("width", "400");
+                    reviewerImage.setAttribute("height", "400");
                     reviewerImage.setAttribute("onerror", "this.src=\'/static/polls/img/assets/person_icon.png\'");
                     reviewEntry.appendChild(reviewerImage);
 
@@ -318,10 +321,10 @@ function renderCategoryPopup() {
  * Renders the left side-panel displaying filter and sort options
  */
 function renderFilterAndSortOptions() {
-    let priceDiv = document.getElementById("price-div");
-    let categoriesDiv = document.getElementById("categories-div");
-    let sortByDiv = document.getElementById("sort-by");
-    document.getElementById("filter-header").innerText = "Filters";
+    let priceDiv = document.getElementById("filter-price-col");
+    let categoriesDiv = document.getElementById("filter-categories-col");
+    let sortByDiv = document.getElementById("sort-by-col");
+    // document.getElementById("filter-header").innerText = "Filters";
     generateCategoryFilters(categoriesDiv);
     generatePriceFilter(priceDiv);
     renderSortByOptions(sortByDiv);

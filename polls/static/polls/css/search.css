@@ -1,7 +1,10 @@
 .search-results {
     margin-top: 35px;
     margin-left: 15%;
+}
 
+#search-row {
+    margin: 0;
 }
 
 .yelp-logo {
@@ -84,6 +87,7 @@ label.form-check-label {
 
 .row.main-content {
     width: 100%;
+    margin-left: -15%;
 }
 
 #filter-header {
@@ -96,4 +100,27 @@ label.form-check-label {
 
 #category-col-two {
     padding: 10%;
+}
+
+#filter-button-row {
+    margin-top: 5%;
+}
+
+@media screen and (max-width: 768px) {
+    .business-image {
+        width: 100px;
+        height: 100px;
+    }
+    .reviewer-img {
+        width: 32px;
+        height: 32px;
+    }
+
+    ul#reviews_list {
+        width: 150%;
+        margin-left: -110px;
+    }
+
+
+
 }

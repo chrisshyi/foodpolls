@@ -37,12 +37,12 @@
     <!-- TODO: Fix the search boxes and search button to the top -->
     <!-- TODO: Fix transparency issues when fixing the search boxes to the top-->
     <div class="row justify-content-center" id="search-row">
-        <div class="col-6 col-sm-4">
+        <div class="col-5 col-sm-4">
             <div class="input-group">
                 <input id="search-term" type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
             </div>
         </div>
-        <div class="col-6 col-sm-4">
+        <div class="col-7 col-sm-4">
             <div class="input-group">
                 <input id="search-city" type="text" class="form-control" placeholder="Near..." aria-label="Near...">
                 <span class="input-group-btn">
@@ -51,42 +51,8 @@
             </div>
         </div>
     </div>
-    <div class="row" id="filter-button-row">
-        <div class="col-6" id="filter-button-col">
-            <button type="button" class="btn btn-outline-info">
-                Filters
-            </button>
-        </div>
-    </div>
-    <div class="container justify-content-center">
-        <div class="row" id="filter-dropdown-row">
-            <div class="col-4" id="filter-categories-col">
-
-            </div>
-            <div class="col-4" id="filter-price-col">
-
-            </div>
-            <div class="col-4" id="sort-by-col">
-
-            </div>
-        </div>
-    </div>
 
     <div class="row main-content">
-        <div class="col-lg-2 col-md-2 col-sm-12" id="search-filter-container">
-            <!-- price filter options -->
-            <div class="container" id="price-div">
-
-            </div>
-            <!-- category filter options -->
-            <div class="container" id="categories-div">
-
-            </div>
-            <!-- sorting options -->
-            <div class="container" id="sort-by">
-
-            </div>
-        </div>
         <div class="col-lg-8 col-md-8 col-sm-12 search-results">
             <ul id="business_listings" class="list-unstyled">
 
@@ -98,8 +64,46 @@
     </div>
 </div>
 {% endblock %} 
+{% block footer %} 
+    <!-- Container for the filter and sort by options, as a slide-up menu -->
+    <div class="container slide-up-hidden" id="slide-up-div">
+        <div class="row">
+            <div class="col-6">
+                <!-- price filter options -->
+                <div class="container" id="price-div">
+
+                </div>
+            </div>
+            <div class="col-6">
+                <!-- category filter options -->
+                <div class="container" id="categories-div">
+
+                </div>
+            </div>
+        </div>  
+        <div class="row">
+            <div class="col-6">
+                <!-- sorting options -->
+                <div class="container" id="sort-by">
+
+                </div>
+            </div>
+            <div class="col-6" id="refine-btn-container">
+                <button type="button" class="btn btn-primary">
+                    Refine
+                </button>
+            </div>
+        </div>  
+    </div>
+    <div class="container footer"> 
+        <a class="btn btn-primary" href="#" role="button" id="toggle-filter-sort-btn">
+            Filter and Sort
+        </a>
+        <a class="btn btn-primary" href="#" role="button" id="create-poll-btn">
+            Create Poll!
+        </a>
+    </div>    
+{% endblock %}
 {% block scripts %}
 <script src="{% static "polls/scripts/javascript/yelp_search.js" %}"></script> 
-{% endblock %} 
-{% block choice_display %} 
 {% endblock %}

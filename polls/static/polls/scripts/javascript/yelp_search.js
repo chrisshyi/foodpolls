@@ -39,6 +39,20 @@ document.getElementById("select-category-btn").addEventListener("click", functio
     $('#category-modal').modal('toggle');
 });
 
+/* 
+ * Adds a click event listener to the filter/sort toggle button so that it toggles sliding menu
+ * when clicked
+ */
+document.getElementById("toggle-filter-sort-btn").addEventListener("click", function() {
+    if (categoryMap.size !== 0) {
+        let slideUpDiv = document.getElementById("slide-up-div");
+        slideUpDiv.classList.toggle("slide-up-hidden");
+        slideUpDiv.classList.toggle("slide-up-shown");
+        let overlay = document.getElementById("overlay");
+        overlay.classList.toggle("overlay-hidden");
+        overlay.classList.toggle("overlay-shown");
+    }    
+});
 
 /**
  * Make an AJAX request to the server for restaurant data based on search parameters
@@ -321,9 +335,9 @@ function renderCategoryPopup() {
  * Renders the left side-panel displaying filter and sort options
  */
 function renderFilterAndSortOptions() {
-    let priceDiv = document.getElementById("filter-price-col");
-    let categoriesDiv = document.getElementById("filter-categories-col");
-    let sortByDiv = document.getElementById("sort-by-col");
+    let priceDiv = document.getElementById("price-div");
+    let categoriesDiv = document.getElementById("categories-div");
+    let sortByDiv = document.getElementById("sort-by");
     // document.getElementById("filter-header").innerText = "Filters";
     generateCategoryFilters(categoriesDiv);
     generatePriceFilter(priceDiv);

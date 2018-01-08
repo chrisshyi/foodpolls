@@ -72,22 +72,30 @@ img.mr-3 {
 }
 
 div#price-div {
-    margin-right: 15%;
-    margin-top: 0;
+    margin-left: 15%;
+    margin-top: 15%;
 }
 
 div#categories-div {
-    margin-left: 1%;
+    margin-top: 15%;
+}
+
+div#sort-by {
+    margin-top: 15%;
+    margin-left: 15%;
 }
 
 label.form-check-label {
     display: inline-block;
     white-space: nowrap;
+    margin-left: -12%;
 }
 
 .row.main-content {
     width: 100%;
     margin-left: -15%;
+    overflow: auto;
+    height: 72vh;
 }
 
 #filter-header {
@@ -106,6 +114,15 @@ label.form-check-label {
     margin-top: 5%;
 }
 
+ul#reviews_list {
+    margin-top: 9%;
+    margin-bottom: 5%;
+}
+
+ul#reviews_list {
+    margin-left: -110px;
+}
+
 @media screen and (max-width: 768px) {
     .business-image {
         width: 100px;
@@ -116,11 +133,101 @@ label.form-check-label {
         height: 32px;
     }
 
-    ul#reviews_list {
-        width: 150%;
-        margin-left: -110px;
+    
+    .row.main-content {
+        margin-left: -15%;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .business-image {
+        width: 125px;
+        height: 125px;
     }
 
+    .reviewer-img {
+        width: 40px;
+        height: 40px;
+    }
 
+    .row.main-content {
+        margin-left: 0;
+    }
+}
 
+@media screen and (min-width: 356px) {
+    img.yelp-stars {
+        width: 155px;
+    }
+}
+
+@media screen and (max-width: 356px) {
+    img.yelp-stars {
+        width: 130px;
+    }
+}
+
+#content-container {
+    padding-right: 0;
+}
+
+.slide-up-hidden {
+    display: none;
+}
+
+.slide-up-shown {
+    z-index: 999;
+    width: 100%;
+    top: 30vh;
+    position: fixed;
+    display: block;
+    background-color: white;
+    transition: display 2s; 
+}
+
+.footer {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 0;
+    max-width: 100%;
+    height: 60px;
+    line-height: 60px;
+    background-color: #f5f5f5;
+}
+
+#refine-btn-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overlay-shown {
+    background-color: #383838;
+    display: block;
+    position: absolute;
+    z-index: 20;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 8vh;
+    opacity: 0.8;
+}
+
+.overlay-hidden {
+    display: none;
+}
+
+a.btn.btn-primary {
+    flex: auto;
+    margin: 5%;
+}
+
+a#toggle-filter-sort-btn {
+    max-width: 125px;
+}
+
+a#create-poll-btn {
+    max-width: 110px;
 }

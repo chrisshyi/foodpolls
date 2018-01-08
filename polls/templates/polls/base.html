@@ -51,7 +51,9 @@
             <span class="navbar-toggler-icon"></span>
         </button> -->
     </nav>
-    <div class="container">
+    <div class="overlay-hidden" id="overlay">
+    </div>
+    <div class="container" id="content-container">
         {% block content %}
         {% endblock %}
         {% if messages %}
@@ -68,8 +70,9 @@
         </ul>
         {% endif %}
     </div>
+    {% block footer %}
+    {% endblock %}
     {% block scripts %}
     {% endblock %}
 </body>
-
 </html>

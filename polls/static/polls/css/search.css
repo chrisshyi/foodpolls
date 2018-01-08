@@ -88,7 +88,13 @@ div#sort-by {
 label.form-check-label {
     display: inline-block;
     white-space: nowrap;
-    margin-left: -12%;
+    margin-left: -9%;
+}
+
+@media screen (min-width: 768px) {
+    label.form-check-label {
+        margin-left: 0;
+    }
 }
 
 .row.main-content {
@@ -179,10 +185,19 @@ ul#reviews_list {
     z-index: 999;
     width: 100%;
     top: 30vh;
+    left: 0;
+    right: 0;
+    bottom: 10vh;
     position: fixed;
     display: block;
     background-color: white;
     transition: display 2s; 
+}
+
+@media screen (min-width: 768px) {
+    .slide-up-shown {
+        height: 30vh;
+    }
 }
 
 .footer {

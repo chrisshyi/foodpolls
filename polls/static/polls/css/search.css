@@ -159,6 +159,27 @@ ul#reviews_list {
     .row.main-content {
         margin-left: 0;
     }
+
+    #slide-up-div {
+        width: 720px;
+        height: 202px;
+    }
+
+    .filter-sort-container {
+        max-width: 25%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    #slide-up-div {
+        width: 362px;
+        height: 354px;
+    }
+
+    .filter-sort-container {
+        max-width: 50%;
+    }
 }
 
 @media screen and (min-width: 356px) {
@@ -172,6 +193,8 @@ ul#reviews_list {
         width: 130px;
     }
 }
+
+
 
 #content-container {
     padding-right: 0;
@@ -194,7 +217,7 @@ ul#reviews_list {
     transition: display 2s; 
 }
 
-@media screen (min-width: 768px) {
+@media screen and (min-width: 768px) {
     .slide-up-shown {
         height: 30vh;
     }
@@ -226,7 +249,7 @@ ul#reviews_list {
     top: 0;
     right: 0;
     left: 0;
-    bottom: 8vh;
+    bottom: 60px;
     opacity: 0.8;
 }
 

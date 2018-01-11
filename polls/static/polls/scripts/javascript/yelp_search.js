@@ -196,7 +196,7 @@ function createNewListing(business) {
     imgUrl += "@2x.png";
     yelpStarsImg.setAttribute("src", imgUrl);
 
-
+    
     /*
     ** Add the Yelp image logo
      */

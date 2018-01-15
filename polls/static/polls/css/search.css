@@ -269,3 +269,7 @@ a#toggle-filter-sort-btn {
 a#create-poll-btn {
     max-width: 110px;
 }
+
+label.form-check-label {
+    white-space: normal;
+}

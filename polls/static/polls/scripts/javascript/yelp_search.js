@@ -40,7 +40,7 @@ document.getElementById("select-category-btn").addEventListener("click", functio
 });
 
 /* 
- * Adds a click event listener to the filter/sort toggle button so that it toggles sliding menu
+ * Adds a click event listener to the filter/sort toggle button so that it toggles a pop-up menu
  * when clicked
  */
 document.getElementById("toggle-filter-sort-btn").addEventListener("click", function() {
@@ -53,6 +53,27 @@ document.getElementById("toggle-filter-sort-btn").addEventListener("click", func
         overlay.classList.toggle("overlay-shown");
     }    
 });
+
+/*
+ * Adds a click event listener to the "Refine" button in the filter and sort pop-up. Sends an AJAX
+ * request to the server for filtered and/or sorted results
+ */
+document.getElementById("refine-btn").addEventListener("click", function() {
+    /* Retract the filter/sort pop-up and the grey overlay */
+    let slideUpDiv = document.getElementById("slide-up-div");
+    slideUpDiv.classList.toggle("slide-up-hidden");
+    slideUpDiv.classList.toggle("slide-up-shown");
+    let overlay = document.getElementById("overlay");
+    overlay.classList.toggle("overlay-hidden");
+    overlay.classList.toggle("overlay-shown");
+
+    let categoryFilters = getFilterOptions("category-checkbox");
+    let priceFilters = getFilterOptions("price-checkbox");
+    let sortBy = getSortByOptions();
+
+    makeSearchRequest(searchTerm.value, city.value, categoryFilters, priceFilters, sortBy);
+});
+
 
 /**
  * Make an AJAX request to the server for restaurant data based on search parameters
@@ -363,6 +384,8 @@ function generatePriceFilter(priceDiv) {
         inputElem.classList.add("form-check-input");
         inputElem.setAttribute("type", "checkbox");
         inputElem.id = "price-check-" + (i + 1);
+        inputElem.value = (i + 1).toString();
+        inputElem.classList.add("price-checkbox");
         inputDiv.appendChild(inputElem);
 
         let inputLabel = document.createElement("label");
@@ -420,9 +443,11 @@ function generateCategoryFilters(categoryDiv) {
         inputElem.classList.add("form-check-input");
         inputElem.setAttribute("type", "checkbox");
         inputElem.id = "category-check-" + (i + 1);
+        inputElem.classList.add("category-checkbox");
         
         let selectedVal;
         let randomCategory;
+        /* If some categories have been selected, render those first */
         if (typeof(selectedKeysIter) !== "undefined") {
             let nextItem = selectedKeysIter.next();
             if (!nextItem.done) {
@@ -431,13 +456,14 @@ function generateCategoryFilters(categoryDiv) {
         }
 
         if (typeof(selectedVal) !== "undefined") {
-            inputElem.value = selectedVal;
+            inputElem.value = categoryMap.get(selectedVal);
             inputElem.checked = true;
         } else {
+            /* Get a random category */
             do {
                 randomCategory = categoryKeyIter.next().value;
             } while (renderedCategories.has(randomCategory));
-            inputElem.value = randomCategory;
+            inputElem.value = categoryMap.get(randomCategory);
             inputElem.checked = false;
         }
         renderedCategories.add(inputElem.value);
@@ -503,7 +529,7 @@ function renderSortByOptions(sortByDiv) {
         inputAttributes.set("name", "sortByOption");
         inputAttributes.set("id", "sortByOption" + counter);
         inputAttributes.set("value", value);
-        let inputElem = createNewElement("input", ["form-check-input"], inputAttributes);
+        let inputElem = createNewElement("input", ["form-check-input", "sort-by-radio"], inputAttributes);
         inputDiv.appendChild(inputElem);
 
         labelAttributes = new Map();
@@ -517,4 +543,39 @@ function renderSortByOptions(sortByDiv) {
         counter++;
     }
 
+}
+
+/**
+ * Finds all checkboxes of a certain kind (e.g. price or category), and converts the checked ones into a string
+ * for filtering use
+ * @param {*} checkBoxClass the class of checkboxes to collect user input from
+ * @returns a string representing checked options
+ */
+function getFilterOptions(checkBoxClass) {
+    let checkBoxes = document.getElementsByClassName(checkBoxClass);
+    let filters = "";
+
+    for (let checkBox of checkBoxes) {
+        if (checkBox.checked) {
+            filters += (checkBox.value + ", ");
+        }
+    }
+    filters = filters.replace(/, $/g, "");
+    return filters;
+}
+
+/**
+ * Finds the user selected sort option and returns its representative string
+ * @returns a string representing the user selected sort-by option
+ */
+function getSortByOptions() {
+    let sortByRadios = document.getElementsByClassName("sort-by-radio");
+    let sortByOption = "";
+
+    for (let sortByRadio of sortByRadios) {
+        if (sortByRadio.checked) {
+            sortByOption += sortByRadio.value;
+        }
+    }
+    return sortByOption;
 }

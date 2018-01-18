@@ -1,3 +1,9 @@
+/**
+ * This .js file contains code pertaining to the main search page in the application. 
+ * Functionality such as making an AJAX request to the server to obtain Yelp search results, rendering filter and 
+ * sort options, and so on.
+ */
+
 let searchTerm = document.getElementById("search-term");
 let city = document.getElementById("search-city");
 let csrfToken = Cookies.get('csrftoken');
@@ -176,6 +182,7 @@ function createNewListing(business) {
     subHeader.classList.add("mt-0");
     subHeader.classList.add("mb-1");
     subHeader.innerText = business['categories'][0]['title'];
+    subHeader.innerText += " " + business['price'];
     subHeader.classList.add("venue-category");
 
     let nameLink = document.createElement("a");
@@ -187,21 +194,18 @@ function createNewListing(business) {
 
     /* div containing the rating and price */
     let ratingAndLogo = document.createElement("div");
-    ratingAndLogo.classList.add("rating-and-image");
+    ratingAndLogo.classList.add("rating-and-logo");
     let innerSpan = document.createElement("span");
     ratingAndLogo.appendChild(innerSpan);
 
-    let reviewCount = document.createElement("p");
-    reviewCount.classList.add("review-count");
-    reviewCount.innerText = "Based on " + business['review_count'] + " reviews";
-    ratingAndLogo.appendChild(reviewCount);
 
     let yelpStarsImg = document.createElement("img");
     let imgUrl = "";
     imgUrl += "/static/polls/img/yelp/yelp_stars/small/small_";
 
     yelpStarsImg.setAttribute("class", "yelp-stars");
-    innerSpan.appendChild(yelpStarsImg);
+    ratingAndLogo.appendChild(yelpStarsImg);
+    // innerSpan.appendChild(yelpStarsImg);
 
     let rating = business['rating'];
     /* Check if the rating is an integer */
@@ -223,12 +227,31 @@ function createNewListing(business) {
      */
     let yelpPageLink = document.createElement("a");  /* anchor that links to the listing's Yelp page */
     yelpPageLink.setAttribute("href", business['url']);
+    yelpPageLink.classList.add("yelp-page-link");
     let yelpLogo = document.createElement("img");
     yelpLogo.classList.add("yelp-logo");
     yelpLogo.setAttribute("src", "/static/polls/img/yelp/Yelp_trademark_RGB.png");
     yelpPageLink.appendChild(yelpLogo);
-    innerSpan.appendChild(yelpPageLink);
+    ratingAndLogo.appendChild(yelpPageLink);
+    // innerSpan.appendChild(yelpPageLink);
     /* TODO: Add a "Add to Poll" button for each listing */
+    let countAndAddSpan = document.createElement("span");
+    countAndAddSpan.classList.add("add-btn-span");
+
+    let reviewCount = document.createElement("p");
+    reviewCount.classList.add("review-count");
+    reviewCount.innerText = "Based on " + business['review_count'] + " reviews";
+
+    let addBtn = document.createElement("button");
+    addBtn.classList.add("btn", "btn-success", "btn-sm");
+    addBtn.setAttribute("id", "add-btn");
+    addBtn.innerText = "Add to Poll";
+
+    countAndAddSpan.appendChild(addBtn);
+    countAndAddSpan.appendChild(reviewCount);
+
+    ratingAndLogo.appendChild(countAndAddSpan);
+
     liBody.appendChild(ratingAndLogo);
 
     /**

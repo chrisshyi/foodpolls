@@ -9,6 +9,11 @@ let city = document.getElementById("search-city");
 let csrfToken = Cookies.get('csrftoken');
 let httpRequest;
 let response;
+/*
+ * A set of integers corresponding to the venues that a user wishes to add to the poll. Each number
+ * corresponds to the index of a venue in a list of venues stored in a session variable
+ */
+let venuesToAdd = new Set();
 /**
  * Maps the display name of a category (string) to its alias (string, used for Yelp API calls)
  */
@@ -65,6 +70,8 @@ document.getElementById("toggle-filter-sort-btn").addEventListener("click", func
  * request to the server for filtered and/or sorted results
  */
 document.getElementById("refine-btn").addEventListener("click", function() {
+    /* flush out the previous selected venues to add when refining a search */
+    venuesToAdd = new Set();
     /* Retract the filter/sort pop-up and the grey overlay */
     let slideUpDiv = document.getElementById("slide-up-div");
     slideUpDiv.classList.toggle("slide-up-hidden");
@@ -133,7 +140,7 @@ function populateWithResponse() {
             response = JSON.parse(httpRequest.responseText);
             for (let i = 0; i < response['businesses'].length; i++) {
                 let business = response['businesses'][i];
-                businessListings.appendChild(createNewListing(business));
+                businessListings.appendChild(createNewListing(business, i));
             }
             renderFilterAndSortOptions();
             
@@ -147,13 +154,16 @@ function populateWithResponse() {
 /**
  * Returns a new li element with the business's information rendered
  * @param business: a JavaScript object from the businesses array returned by the Yelp API
+ * @param index: the array index of the business in the businesses array, used to retrieve information
+ * about the business later when adding businesses to poll
  * @return a new <li> element with Yelp data about the business of interest
  */
-function createNewListing(business) {
+function createNewListing(business, index) {
     for (let i = 0; i < business['categories'].length; i++) {
         let category = business['categories'][i];
         categoryMap.set(category['title'], category['alias']);
     }
+    /* innerHttpRequest object will be used for an AJAX call to get reviews for a listing */
     let innerHttpRequest;
     /* The list item */
     let newLi = document.createElement("li");
@@ -188,6 +198,7 @@ function createNewListing(business) {
     let nameLink = document.createElement("a");
     nameLink.textContent = business['name'];
     nameLink.setAttribute("href", business['url']);
+    nameLink.setAttribute("target", "_blank");
     mediaHeader.appendChild(nameLink);
     liBody.appendChild(mediaHeader);
     liBody.appendChild(subHeader);
@@ -227,6 +238,7 @@ function createNewListing(business) {
      */
     let yelpPageLink = document.createElement("a");  /* anchor that links to the listing's Yelp page */
     yelpPageLink.setAttribute("href", business['url']);
+    yelpPageLink.setAttribute("target", "_blank");
     yelpPageLink.classList.add("yelp-page-link");
     let yelpLogo = document.createElement("img");
     yelpLogo.classList.add("yelp-logo");
@@ -243,9 +255,21 @@ function createNewListing(business) {
     reviewCount.innerText = "Based on " + business['review_count'] + " reviews";
 
     let addBtn = document.createElement("button");
-    addBtn.classList.add("btn", "btn-success", "btn-sm");
-    addBtn.setAttribute("id", "add-btn");
-    addBtn.innerText = "Add to Poll";
+    addBtn.classList.add("btn", "btn-success", "btn-sm", "add-btn");
+    addBtn.setAttribute("id", "add-btn-" + index);
+
+    addBtn.innerText = "Add to Poll!";
+    addBtn.addEventListener("click", function() {
+       /* Set.delete(element) returns true if the element exists */
+       addBtn.classList.toggle("btn-danger");
+       addBtn.classList.toggle("btn-success");
+       if (venuesToAdd.delete(index)) {
+           addBtn.innerText = "Add to Poll!";
+       } else {
+           venuesToAdd.add(index);
+           addBtn.innerText = "Remove";
+       }
+    });
 
     countAndAddSpan.appendChild(addBtn);
     countAndAddSpan.appendChild(reviewCount);
@@ -310,6 +334,7 @@ function createNewListing(business) {
                     // let reviewText = document.createElement("p");
                     let reviewLink = document.createElement("a");
                     reviewLink.classList.add("review-link");
+                    reviewLink.setAttribute("target", "_blank");
                     reviewLink.innerText = "Read More";
                     reviewLink.setAttribute("href", review['url']);
 
@@ -324,8 +349,9 @@ function createNewListing(business) {
             }
         }
     }
-
-    getReviewRequest();
+    window.setTimeout(getReviewRequest, 1000);
+    // window.setTimeout(getReviewRequest, 1000);
+    // getReviewRequest();
 
     return newLi;
 }
@@ -514,7 +540,7 @@ function generateCategoryFilters(categoryDiv) {
  * @param {string} type:  the element type (HTML tag)
  * @param {Array} elemClasses: classes for the new element
  * @param {Map} elemAttributes: other attributes 
- * @returns the newly created DOM element
+ * @returns a newly created DOM element
  */
 function createNewElement(type, elemClasses=[], elemAttributes=new Map()) {
     let newElement = document.createElement(type);

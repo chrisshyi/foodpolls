@@ -108,7 +108,7 @@ label.form-check-label {
     margin-left: -9%;
 }
 
-@media screen (min-width: 768px) {
+@media screen and (min-width: 768px) {
     label.form-check-label {
         margin-left: 0;
     }
@@ -291,10 +291,14 @@ label.form-check-label {
     white-space: normal;
 }
 
-button#add-btn {
+button.add-btn {
     margin-right: 25px;
     margin-left: -15px;
     display: inline-block;
+}
+
+button.add-btn.btn-danger {
+    margin-right: 45px;
 }
 
 .add-btn-span {

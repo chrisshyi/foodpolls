@@ -75,7 +75,7 @@ def search_for_venues(request):
     params = {
         'term': search_term,
         'location': city,
-        'limit': 25,
+        'limit': 15,
     }
     # Add optional parameters only if they're in the AJAX request
     for param in optional_params:
@@ -84,30 +84,24 @@ def search_for_venues(request):
 
     yelp_search_response = \
         requests.get('https://api.yelp.com/v3/businesses/search', headers=headers, params=params).json()
+    businesses_list = yelp_search_response['businesses']
+    venues = {}
 
+    for i in range(len(businesses_list)):
+        business = businesses_list[i]
+        print("venue number: " + str(i))
+        venues[i] = {'name': business['name'],
+                     'image_url': business['image_url'],
+                     'categories': business['categories'],
+                     'rating': business['rating'],
+                     }
+        if 'price' in business:
+            venues[i]['price'] = business['price']
+    request.session['venue_list'] = venues
+    for key, value in request.session['venue_list'].items():
+        print(value['name'])
+        print(value['rating'])
     return HttpResponse(json.dumps(yelp_search_response))
-
-
-"""
-Old way of authenticating deprecated by Yelp
-"""
-# def yelp_authenticate():
-#     """
-#     Handles authentication when using the Yelp Fusion API
-#     :return: token string that is used to access Yelp Fusion API endpoints
-#     """
-#     yelp_data = {
-#         "grant_type": "client_credentials",
-#         "client_id": settings.YELP_CLIENT_ID,
-#         "client_secret": settings.YELP_CLIENT_SECRET,
-#     }
-#     yelp_auth_response = requests.post("https://api.yelp.com/oauth2/token", yelp_data).json()
-#
-#     yelp_token = yelp_auth_response['access_token']
-#     token_type = yelp_auth_response['token_type']
-#
-#     token_string = token_type + " " + yelp_token
-#     return token_string
 
 
 def get_reviews(request):
@@ -116,7 +110,6 @@ def get_reviews(request):
     :param request: the HTTP request
     :return: a response object encapsulating the reviews
     """
-
     business_id = json.loads(request.body)['business_id']
     # form the request string
     request_string = "https://api.yelp.com/v3/businesses/{}/reviews".format(business_id)

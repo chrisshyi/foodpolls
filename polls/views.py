@@ -118,3 +118,12 @@ def get_reviews(request):
 
     response = requests.get(request_string, headers=headers).json()
     return HttpResponse(json.dumps(response))
+
+def generate_poll(request):
+    """
+    Generates a poll based on creator information (name and email), as well as 
+    venue choices
+    :param request: the HTTP request object
+    :return: a response object rendering the poll display page
+    """
+    

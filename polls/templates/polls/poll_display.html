@@ -1,26 +1,40 @@
-{% extends 'polls/base.html' %}
-{% load widget_tweaks %}
-{% load static %}
+{% extends 'polls/base.html' %} 
+{% load widget_tweaks %} 
+{% load static %} 
 {% block stylesheets %}
 <link href="{% static "polls/css/poll_display.css" %}" rel="stylesheet" type="text/css"> 
-{% endblock %}
+{% endblock %} 
 {% block content %}
-    <div class="container-fluid">
+<div class="container-fluid" id="poll-main-container">
+    <div class="row justify-content-center">
         <h3>
-            
+            {{ question.question_text }}
         </h3>
     </div>
+    <div class="row justify-content-center">
+        <h6>
+            Created by {{ question.creator_name }}
+        </h6>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-4 btn-col">
+            <a class="btn btn-primary btn-sm" href="#" role="button" id="add-more-btn">
+                Add Choice
+            </a>
+        </div>
+        <div class="col-4 btn-col">
+            <a class="btn btn-primary btn-sm" href="#" role="button" id="invite-btn">
+                Invite Friends
+            </a>
+        </div>
+        <div class="col-4 btn-col">
+            <a class="btn btn-primary btn-sm" href="#" role="button" id="results-btn">
+               See Results 
+            </a>
+        </div>
+    </div>
+</div>
 
+{% endblock %} 
+{% block scripts %} 
 {% endblock %}
-{% block scripts %}
-{% endblock %}
-
-
-
-
-
-
-
-
-
-

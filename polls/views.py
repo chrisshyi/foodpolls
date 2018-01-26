@@ -6,6 +6,7 @@ from django.contrib import messages
 import json
 import requests
 from django.conf import settings
+from .models import Question, Choice
 
 
 def index(request):
@@ -44,6 +45,7 @@ def create_question(request):
             
             new_question.voters = ''
             new_question.save()
+            request.session['poll_question_id'] = new_question.id
             return redirect('choices_search')
         else:
             messages.error(request, 'Invalid information entered')
@@ -126,4 +128,5 @@ def generate_poll(request):
     :param request: the HTTP request object
     :return: a response object rendering the poll display page
     """
-    
+    return render(request, 'polls/poll_display.html', \
+                   {'question': Question.objects.get(id=request.session['poll_question_id'])})

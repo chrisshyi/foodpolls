@@ -8,21 +8,6 @@ import requests
 from django.conf import settings
 from .models import Question, Choice
 
-class Venue:
-    def __init__(self, name, category, image_url, rating, yelp_url, price=''):
-        self.name = name
-        self.category = category
-        self.image_url = image_url
-        self.price = price
-        self.rating = rating
-        self.yelp_url = yelp_url
-    
-    def __str__(self):
-        return "{}, category: {}".format(self.name, self.category)
-
-    def __eq__(self, obj):
-        return isinstance(obj, Venue) and obj.name == self.name and obj.yelp_url == self.yelp_url
-
 
 def index(request):
     return render(request, 'polls/index.html')
@@ -107,12 +92,12 @@ def search_for_venues(request):
     for i in range(len(businesses_list)):
         business = businesses_list[i]
         print("venue number: " + str(i))
-        venues[i] = { \
-                     'name': business['name'], \
-                     'image_url': business['image_url'], \
-                     'category': business['categories'][0]['title'], \
-                     'rating': business['rating'], \
-                     'yelp_url': business['url'], \
+        venues[i] = {
+                     'name': business['name'],
+                     'img_url': business['image_url'],
+                     'category': business['categories'][0]['title'],
+                     'rating': business['rating'],
+                     'yelp_url': business['url'],
                     }
         if 'price' in business:
             venues[i]['price'] = business['price']
@@ -138,6 +123,7 @@ def get_reviews(request):
     response = requests.get(request_string, headers=headers).json()
     return HttpResponse(json.dumps(response))
 
+
 def generate_poll(request):
     """
     Generates a poll based on creator information (name and email), as well as 
@@ -145,8 +131,9 @@ def generate_poll(request):
     :param request: the HTTP request object
     :return: a response object rendering the poll display page
     """
-    return render(request, 'polls/poll_display.html', \
-                   {'question': Question.objects.get(id=request.session['poll_question_id'])})
+    return render(request, 'polls/poll_display.html',
+                {'question': Question.objects.get(id=request.session['poll_question_id'])})
+
 
 def add_or_delete_venue(request):
     """
@@ -157,17 +144,17 @@ def add_or_delete_venue(request):
     """
     # json.loads(request.body) returns a Python dictionary
     add_or_delete_data = json.loads(request.body)
-    index = add_or_delete_data['index']
-    venue = request.session['venue_list'][index]
-    venue_obj = Venue(venue['name'], venue['category'], venue['img_url'], venue['rating'], venue['yelp_url'])
-
-    if 'price' in venue:
-        venue_obj.price = venue['price']
+    venue_index = str(add_or_delete_data['index'])
+    venue = request.session['venue_list'][venue_index]
 
     if "venues_to_add" not in request.session:
         request.session['venues_to_add'] = []
+    venues_to_add = request.session['venues_to_add']
     if add_or_delete_data['add']:
-        request.session['venues_to_add'].append(venue_obj)
+        venues_to_add.append(venue)
     else:
-        request.session['venues_to_add'].remove(venue_obj)
+        venues_to_add.remove(venue)
+    # need to reassign the session variable since Django only saves session information when
+    # any of the session dictionary values have been assigned to deleted.
+    request.session['venues_to_add'] = venues_to_add
     return HttpResponse("venue successfully added/deleted")

@@ -8,6 +8,21 @@ import requests
 from django.conf import settings
 from .models import Question, Choice
 
+class Venue:
+    def __init__(self, name, category, image_url, rating, yelp_url, price=''):
+        self.name = name
+        self.category = category
+        self.image_url = image_url
+        self.price = price
+        self.rating = rating
+        self.yelp_url = yelp_url
+    
+    def __str__(self):
+        return "{}, category: {}".format(self.name, self.category)
+
+    def __eq__(self, obj):
+        return isinstance(obj, Venue) and obj.name == self.name and obj.yelp_url == self.yelp_url
+
 
 def index(request):
     return render(request, 'polls/index.html')
@@ -92,11 +107,13 @@ def search_for_venues(request):
     for i in range(len(businesses_list)):
         business = businesses_list[i]
         print("venue number: " + str(i))
-        venues[i] = {'name': business['name'],
-                     'image_url': business['image_url'],
-                     'categories': business['categories'],
-                     'rating': business['rating'],
-                     }
+        venues[i] = { \
+                     'name': business['name'], \
+                     'image_url': business['image_url'], \
+                     'category': business['categories'][0]['title'], \
+                     'rating': business['rating'], \
+                     'yelp_url': business['url'], \
+                    }
         if 'price' in business:
             venues[i]['price'] = business['price']
     request.session['venue_list'] = venues
@@ -130,3 +147,27 @@ def generate_poll(request):
     """
     return render(request, 'polls/poll_display.html', \
                    {'question': Question.objects.get(id=request.session['poll_question_id'])})
+
+def add_or_delete_venue(request):
+    """
+    Receives an AJAX request from the frontend to add/delete venues during the poll creation process
+    Uses a session variable to get a hold of a list of venues
+    :param request: the HTTP request object
+    :return: a response object indicating if the addition/deletion was successful
+    """
+    # json.loads(request.body) returns a Python dictionary
+    add_or_delete_data = json.loads(request.body)
+    index = add_or_delete_data['index']
+    venue = request.session['venue_list'][index]
+    venue_obj = Venue(venue['name'], venue['category'], venue['img_url'], venue['rating'], venue['yelp_url'])
+
+    if 'price' in venue:
+        venue_obj.price = venue['price']
+
+    if "venues_to_add" not in request.session:
+        request.session['venues_to_add'] = []
+    if add_or_delete_data['add']:
+        request.session['venues_to_add'].append(venue_obj)
+    else:
+        request.session['venues_to_add'].remove(venue_obj)
+    return HttpResponse("venue successfully added/deleted")

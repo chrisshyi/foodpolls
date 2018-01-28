@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^search_for_venues$', views.search_for_venues, name='search_for_venues'),
     url(r'^get_reviews$', views.get_reviews, name='get_reviews'),
     url(r'^generate_poll$', views.generate_poll, name='generate_poll'),
+    url(r'^add_or_delete_venue$', views.add_or_delete_venue, name='add_or_delete_venue'),
 ]

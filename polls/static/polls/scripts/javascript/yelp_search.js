@@ -174,9 +174,6 @@ function createNewListing(business, index) {
     liImage.setAttribute("height", "1000");
     liImage.setAttribute("src", business['image_url']);
     liImage.classList.add("mr-3", "business-image");
-    // liImage.setAttribute("sizes", "(max-width: 380px) 60px, 200px");
-    // liImage.setAttribute("height", '200px');
-    // liImage.setAttribute("width", "200px");
     newLi.appendChild(liImage);
     /* The body of the media listing (Bootstrap) */
     let liBody = document.createElement("div");
@@ -216,7 +213,6 @@ function createNewListing(business, index) {
 
     yelpStarsImg.setAttribute("class", "yelp-stars");
     ratingAndLogo.appendChild(yelpStarsImg);
-    // innerSpan.appendChild(yelpStarsImg);
 
     let rating = business['rating'];
     /* Check if the rating is an integer */
@@ -258,17 +254,38 @@ function createNewListing(business, index) {
     addBtn.classList.add("btn", "btn-success", "btn-sm", "add-btn");
     addBtn.setAttribute("id", "add-btn-" + index);
 
+    /* The XHR object that will be used to add/delete venues from the poll through AJAX calls */
+    let venueHttpRequest;
+
     addBtn.innerText = "Add to Poll!";
     addBtn.addEventListener("click", function() {
-       /* Set.delete(element) returns true if the element exists */
-       addBtn.classList.toggle("btn-danger");
-       addBtn.classList.toggle("btn-success");
-       if (venuesToAdd.delete(index)) {
-           addBtn.innerText = "Add to Poll!";
-       } else {
-           venuesToAdd.add(index);
-           addBtn.innerText = "Remove";
-       }
+        venueHttpRequest = new XMLHttpRequest();
+        venueHttpRequest.onreadystatechange = function() {
+            if (venueHttpRequest.readyState === XMLHttpRequest.DONE) {
+                if (venueHttpRequest.status === 200) {
+                    addBtn.classList.toggle("btn-danger");
+                    addBtn.classList.toggle("btn-success");
+                    /* Set.delete(element) returns true if the element exists */
+                    if (venuesToAdd.has(index)) {
+                        venuesToAdd.delete(index);
+                        addBtn.innerText = "Add to Poll!";
+                    } else {
+                        venuesToAdd.add(index);
+                        addBtn.innerText = "Remove";
+                    }
+                } else {
+                    alert("There was a problem with the request");
+                }
+            }
+        }
+        let addOrDeleteData = {
+            "index": index,
+            "add": !venuesToAdd.has(index),
+        }
+        venueHttpRequest.open('POST', '/add_or_delete_venue', true);
+        venueHttpRequest.setRequestHeader('Content-Type', 'application/json');
+        venueHttpRequest.setRequestHeader("X-CSRFToken", csrfToken);
+        venueHttpRequest.send(JSON.stringify(addOrDeleteData));
     });
 
     countAndAddSpan.appendChild(addBtn);

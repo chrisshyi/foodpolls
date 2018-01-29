@@ -7,8 +7,8 @@ class Question(models.Model):
     pub_date = models.DateField('date published')
     creator_email = models.EmailField(default='')
     creator_name = models.CharField(max_length=25, default='')
-    # list of all the voters, TODO: create new Voter model
-    # all_voters = ArrayField(models.CharField(max_length=25), default=list)
+    # list of all the voters
+    all_voters = ArrayField(models.CharField(max_length=25), default=list)
     
     def __str__(self):
         return "{} created by {} on {}".format(self.question_text, self.creator_name, str(self.pub_date))
@@ -22,14 +22,16 @@ class Choice(models.Model):
     venue_category = models.CharField(max_length=200)
     venue_picture_url = models.CharField(max_length=250)
     # Range of 1 ~ 4, corresponding to Yelp price levels
-    price_range = models.PositiveSmallIntegerField(default=1, blank=True)
+    # can be blank
+    price_range = models.CharField(max_length=4, blank=True)
     avg_rating = models.PositiveSmallIntegerField()
     yelp_page_url = models.CharField(max_length=250)
     # End of venue fields
-    
+
+    # Used to determine whether a Yelp star image with half stars should be used. Not optimal but can't think of a
+    # better way to do it for now
+    rating_is_integer = models.BooleanField(default=True)
     # List of people who voted for this choice
     voters = ArrayField(models.CharField(max_length=25), default=list)
 
-# empty for now. Work on this later. 
-# class Voter(models.Model):
-    
+

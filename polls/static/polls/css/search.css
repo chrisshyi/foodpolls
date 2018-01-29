@@ -12,6 +12,11 @@
     margin-top: -7px;
 }
 
+h5.listing-name-header {
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+
 .rating-and-logo {
     display: flex;
     flex-direction: column;

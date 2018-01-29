@@ -131,8 +131,32 @@ def generate_poll(request):
     :param request: the HTTP request object
     :return: a response object rendering the poll display page
     """
-    return render(request, 'polls/poll_display.html',
-                {'question': Question.objects.get(id=request.session['poll_question_id'])})
+    venues = request.session['venues_to_add']
+    poll_question = Question.objects.get(id=request.session['poll_question_id'])
+
+    # use a list to collect all the Choice objects we'll be creating, so we won't have to query the database
+    # after they've been created in order to render the poll display page
+    choices_list = []
+    # Create Choice objects and save them to database
+    for venue in venues:
+        choice = Choice(question=poll_question,
+                        venue_name=venue['name'],
+                        venue_category=venue['category'],
+                        venue_picture_url=venue['img_url'],
+                        avg_rating=int(venue['rating']),
+                        yelp_page_url=venue['yelp_url'],
+                        )
+        if 'price' in venue:
+            choice.price_range = venue['price']
+        choice.rating_is_integer = venue['rating'].is_integer()
+        choice.save()
+        choices_list.append(choice)
+    context = {
+        'question': poll_question,
+        'choices_list': choices_list,
+    }
+
+    return render(request, 'polls/poll_display.html', context)
 
 
 def add_or_delete_venue(request):

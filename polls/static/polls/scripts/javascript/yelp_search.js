@@ -184,6 +184,7 @@ function createNewListing(business, index) {
     let mediaHeader = document.createElement("h5");
     mediaHeader.classList.add("mt-0");
     mediaHeader.classList.add("mb-1");
+    mediaHeader.classList.add("listing-name-header")
     /* The category for the venue */
     let subHeader = document.createElement("h6");
     subHeader.classList.add("mt-0");

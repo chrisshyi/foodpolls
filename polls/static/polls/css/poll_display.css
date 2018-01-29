@@ -9,3 +9,313 @@ div.col-4.btn-col {
 .btn-sm {
     width: 102px;
 }
+
+.search-results {
+    margin-top: 35px;
+    margin-left: 15%;
+}
+
+#search-row {
+    margin: 0;
+}
+
+.yelp-logo {
+    max-height: 60px;
+    margin-top: -7px;
+}
+
+.rating-and-logo {
+    display: flex;
+    flex-direction: column;
+}
+
+@media screen and (min-width: 768px) {
+    .rating-and-logo {
+        margin-top: 25px;
+    }
+
+    ul#reviews_list {
+        margin-top: 0;
+    }
+}
+
+.search-container {
+    padding-top: 40px;
+}
+
+.review-count {
+    text-align: left;
+    color: grey;
+    margin-bottom: 3px;
+    margin-top: -10px;
+    font-size: small;
+    display: inline-block;
+}
+
+.venue-category {
+    color: #909090;
+}
+
+.reviewer-img {
+    height: 32px;
+    width: 32px;
+}
+
+.reviewer-name {
+    font-size: medium;
+}
+
+.review-body {
+    font-size: small;
+}
+
+.review-link {
+    color: lightskyblue;
+    display: inline-block;
+}
+
+.review-link:hover {
+    color: mediumpurple;
+}
+
+.review-li {
+    margin: 2%;
+}
+
+.business-listing {
+    margin: 2%;
+}
+
+img.mr-3 {
+    padding: 0;
+    border-radius: 15%;
+}
+
+#search-filter-container {
+    /* margin-left: -12%;
+    margin-right: 12%; */
+    margin-top: 1.5%;
+    font-size: 0.9em;
+    position: fixed;
+    left: 2%;
+}
+
+div#price-div {
+    margin-left: 15%;
+    margin-top: 15%;
+}
+
+div#categories-div {
+    margin-top: 15%;
+}
+
+div#sort-by {
+    margin-top: 15%;
+    margin-left: 15%;
+}
+
+label.form-check-label {
+    display: inline-block;
+    white-space: nowrap;
+    margin-left: -9%;
+}
+
+@media screen and (min-width: 768px) {
+    label.form-check-label {
+        margin-left: 0;
+    }
+}
+
+.row.main-content {
+    width: 100%;
+    margin-left: -15%;
+    overflow: auto;
+    height: 72vh;
+}
+
+#filter-header {
+    text-align: center;
+}
+
+#category-col-one {
+    padding: 10%;
+}
+
+#category-col-two {
+    padding: 10%;
+}
+
+#filter-button-row {
+    margin-top: 5%;
+}
+
+ul#reviews_list {
+    margin-bottom: 5%;
+    margin-left: -110px;
+}
+
+@media screen and (max-width: 768px) {
+    .business-image {
+        width: 100px;
+        height: 100px;
+    }
+    .reviewer-img {
+        width: 32px;
+        height: 32px;
+    }
+
+
+    .row.main-content {
+        margin-left: -15%;
+    }
+
+    ul#reviews_list {
+        margin-top: 9%;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .business-image {
+        width: 125px;
+        height: 125px;
+    }
+
+    .reviewer-img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .row.main-content {
+        margin-left: 0;
+    }
+
+    #slide-up-div {
+        width: 720px;
+        height: 202px;
+    }
+
+    .filter-sort-container {
+        max-width: 25%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    #slide-up-div {
+        width: 362px;
+        height: 354px;
+    }
+
+    .filter-sort-container {
+        max-width: 50%;
+    }
+}
+
+@media screen and (min-width: 356px) {
+    img.yelp-stars {
+        width: 155px;
+    }
+}
+
+@media screen and (max-width: 356px) {
+    img.yelp-stars {
+        width: 130px;
+    }
+}
+
+
+
+#content-container {
+    padding-right: 0;
+}
+
+.slide-up-hidden {
+    display: none;
+}
+
+.slide-up-shown {
+    z-index: 999;
+    width: 100%;
+    top: 30vh;
+    left: 0;
+    right: 0;
+    bottom: 10vh;
+    position: fixed;
+    display: block;
+    background-color: white;
+    transition: display 2s;
+}
+
+@media screen and (min-width: 768px) {
+    .slide-up-shown {
+        height: 30vh;
+    }
+}
+
+.footer {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 0;
+    max-width: 100%;
+    height: 60px;
+    line-height: 60px;
+    background-color: #f5f5f5;
+}
+
+#refine-btn-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overlay-shown {
+    background-color: #383838;
+    display: block;
+    position: absolute;
+    z-index: 20;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 60px;
+    opacity: 0.8;
+}
+
+.overlay-hidden {
+    display: none;
+}
+
+a.btn.btn-primary {
+    flex: auto;
+    margin: 5%;
+}
+
+a#toggle-filter-sort-btn {
+    max-width: 125px;
+}
+
+a#create-poll-btn {
+    max-width: 110px;
+}
+
+label.form-check-label {
+    white-space: normal;
+}
+
+button.add-btn {
+    margin-right: 25px;
+    margin-left: -15px;
+    display: inline-block;
+}
+
+button.add-btn.btn-danger {
+    margin-right: 45px;
+}
+
+.add-btn-span {
+    display: block;
+    width: 250px;
+    margin-left: -100px;
+    margin-top: -15px;
+}

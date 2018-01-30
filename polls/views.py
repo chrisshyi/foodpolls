@@ -131,14 +131,11 @@ def generate_poll(request):
     Generates a poll based on creator information (name and email), as well as 
     venue choices
     :param request: the HTTP request object
-    :return: a response object rendering the poll display page
+    :return: a redirection to display the newly created poll
     """
     venues = request.session['venues_to_add']
     poll_question = Question.objects.get(id=request.session['poll_question_id'])
 
-    # use a list to collect all the Choice objects we'll be creating, so we won't have to query the database
-    # after they've been created in order to render the poll display page
-    choices_list = []
     # Create Choice objects and save them to database
     for venue in venues:
         choice = Choice(question=poll_question,
@@ -152,13 +149,8 @@ def generate_poll(request):
             choice.price_range = venue['price']
         choice.rating_is_integer = venue['rating'].is_integer()
         choice.save()
-        choices_list.append(choice)
-    context = {
-        'question': poll_question,
-        'choices_list': choices_list,
-    }
 
-    return render(request, 'polls/poll_display.html', context)
+    return redirect('view_poll', poll_id=request.session['poll_question_id'])
 
 
 def add_or_delete_venue(request):
@@ -184,3 +176,20 @@ def add_or_delete_venue(request):
     # any of the session dictionary values have been assigned to deleted.
     request.session['venues_to_add'] = venues_to_add
     return HttpResponse("venue successfully added/deleted")
+
+
+def view_poll(request, poll_id):
+    """
+    Displays a poll based on the poll_id that's passed in
+    :param request: the HTTP request
+    :param poll_id: the id of the poll to be rendered
+    :return: HTTP response displaying the desired poll
+    """
+    poll_question = Question.objects.get(id=poll_id)
+
+    choices_list = Choice.objects.filter(question=poll_question)
+    context = {
+        'question': poll_question,
+        'choices_list': choices_list,
+    }
+    return render(request, 'polls/poll_display.html', context)

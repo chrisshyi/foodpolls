@@ -313,9 +313,13 @@ button.add-btn.btn-danger {
     margin-right: 45px;
 }
 
-.add-btn-span {
+.vote-btn-span {
     display: block;
     width: 250px;
     margin-left: -100px;
-    margin-top: -15px;
+    margin-top: -5px;
+}
+
+li.media.business-listing {
+    margin-top: 15px;
 }

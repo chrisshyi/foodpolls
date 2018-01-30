@@ -46,10 +46,7 @@
                                 </a>
                             </h5>
                             <h6 class="mt-0 mb-1 venue-category">
-                                {{ choice.venue_category }} +
-                                {% if price_range in choice %}
-                                    {{ choice.price_range }}
-                                {% endif %}
+                                {{ choice.venue_category }} {% if choice.price_range != '' %}{{ choice.price_range }}{% endif %}
                             </h6>
                             <div class="rating-and-logo">
                                 <span></span>
@@ -63,7 +60,7 @@
                                 </a>
                                 <span class="add-btn-span">
                                     <button class="btn btn-success btn-sm">
-
+                                        Vote!
                                     </button>
                                 </span>
                             </div>

@@ -18,8 +18,8 @@
     </div>
     <div class="row justify-content-center">
         <div class="col-4 btn-col">
-            <a class="btn btn-primary btn-sm" href="#" role="button" id="add-more-btn">
-                Add Choice
+            <a class="btn btn-primary btn-sm" href="/additional_choice_search" role="button" id="add-more-btn">
+                Add Choices
             </a>
         </div>
         <div class="col-4 btn-col">
@@ -40,7 +40,7 @@
                     <li class="media business-listing">
                         <img width="1000" height="1000" src="{{ choice.venue_picture_url }}" class="mr-3 business-image">
                         <div class="media-body">
-                            <h5 class="mt-0 mb-1">
+                            <h5 class="mt-0 mb-1 listing-name-header">
                                 <a href="{{ choice.yelp_page_url }}" target="_blank">
                                     {{ choice.venue_name }}
                                 </a>

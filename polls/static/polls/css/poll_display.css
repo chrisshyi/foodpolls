@@ -323,3 +323,8 @@ button.add-btn.btn-danger {
 li.media.business-listing {
     margin-top: 15px;
 }
+
+h5.listing-name-header {
+    overflow-x: scroll;
+    white-space: nowrap;
+}

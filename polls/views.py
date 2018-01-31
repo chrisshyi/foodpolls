@@ -149,7 +149,10 @@ def generate_poll(request):
             choice.price_range = venue['price']
         choice.rating_is_integer = venue['rating'].is_integer()
         choice.save()
-
+    # clear these two session variables so that they won't conflict with additional choices that users
+    # might want to add
+    del request.session['venues_to_add']
+    del request.session['venue_list']
     return redirect('view_poll', poll_id=request.session['poll_question_id'])
 
 
@@ -193,3 +196,13 @@ def view_poll(request, poll_id):
         'choices_list': choices_list,
     }
     return render(request, 'polls/poll_display.html', context)
+
+
+def additional_choice_search(request):
+    """
+    Allows the user to add more choices to the poll, renders a page very similar to the search page during poll creation
+    :param request: the HTTP request
+    :return: renders a search page
+    """
+    return render(request, 'polls/additional_search.html')
+

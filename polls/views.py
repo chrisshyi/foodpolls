@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import CreatorInfoForm, QuestionInfoForm
+from .forms import CreatorInfoForm, QuestionInfoForm, JoinPollForm
 from datetime import date
 from django.contrib import messages
 import json
@@ -206,3 +206,22 @@ def additional_choice_search(request):
     """
     return render(request, 'polls/additional_search.html')
 
+
+def join_poll(request):
+    """
+    Displays a form that allows a user to join an existing poll
+    :param request: the HTTP request
+    :return: renders an HTML page with a form where the user can enter a poll id
+    """
+    if request.method == 'POST':
+        form = JoinPollForm(request.POST)
+        if form.is_valid():
+            poll_id = form.cleaned_data['poll_id']
+            try:
+                Question.objects.get(id=poll_id)
+                return redirect('view_poll', poll_id=poll_id)
+            except Question.DoesNotExist:
+                messages.add_message(request, messages.ERROR, 'The poll ID does not exist.')
+    else:
+        form = JoinPollForm()
+    return render(request, 'polls/join_poll.html', {'form': form})

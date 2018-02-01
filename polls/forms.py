@@ -13,3 +13,7 @@ class QuestionInfoForm(ModelForm):
         model = Question
         fields = ['question_text',]
         labels = {'question_text': 'What\'s the occasion?'}
+
+
+class JoinPollForm(forms.Form):
+    poll_id = forms.CharField(label="Enter Poll ID", max_length=7)

@@ -217,11 +217,17 @@ def join_poll(request):
         form = JoinPollForm(request.POST)
         if form.is_valid():
             poll_id = form.cleaned_data['poll_id']
+            request.session['poll_question_id'] = poll_id
+            user_name = form.cleaned_data['user_name']
             try:
                 Question.objects.get(id=poll_id)
+                request.session['user_name'] = user_name
+                print(request.session['user_name'])
                 return redirect('view_poll', poll_id=poll_id)
             except Question.DoesNotExist:
-                messages.add_message(request, messages.ERROR, 'The poll ID does not exist.')
+                messages.error(request, 'The poll ID does not exist.')
+        else:
+            messages.error(request, "Invalid information entered")
     else:
         form = JoinPollForm()
     return render(request, 'polls/join_poll.html', {'form': form})

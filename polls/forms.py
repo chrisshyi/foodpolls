@@ -16,4 +16,5 @@ class QuestionInfoForm(ModelForm):
 
 
 class JoinPollForm(forms.Form):
-    poll_id = forms.CharField(label="Enter Poll ID", max_length=7)
+    poll_id = forms.IntegerField(label="Enter Poll ID", max_value=1000, min_value=0)
+    user_name = forms.CharField(label="Your name is?", max_length=30)

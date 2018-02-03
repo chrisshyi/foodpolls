@@ -133,6 +133,10 @@ def generate_poll(request):
     :param request: the HTTP request object
     :return: a redirection to display the newly created poll
     """
+    # If user decides not to add anything
+    # Edge case
+    if 'venues_to_add' not in request.session:
+        return redirect('view_poll', poll_id=request.session['poll_question_id'])
     venues = request.session['venues_to_add']
     poll_question = Question.objects.get(id=request.session['poll_question_id'])
 

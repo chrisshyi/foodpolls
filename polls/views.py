@@ -194,6 +194,7 @@ def view_poll(request, poll_id):
     context = {
         'question': poll_question,
         'choices_list': choices_list,
+        'question_id': poll_id,
     }
     return render(request, 'polls/poll_display.html', context)
 

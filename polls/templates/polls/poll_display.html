@@ -3,7 +3,10 @@
 {% load static %} 
 {% block stylesheets %}
 <link href="{% static "polls/css/poll_display.css" %}" rel="stylesheet" type="text/css"> 
-{% endblock %} 
+{% endblock %}
+{% block fonts %}
+<link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+{% endblock %}
 {% block content %}
 <div class="container-fluid" id="poll-main-container">
     <div class="row justify-content-center">
@@ -32,6 +35,10 @@
                See Results 
             </a>
         </div>
+    </div>
+    <div class="row justify-content-center id-display-hidden" id="poll-id-display-row">
+        <p>Use this ID to join the poll!</p>
+        <h5 id="poll-id-header">{{ question_id }}</h5>
     </div>
     <div class="row main-content">
         <div class="col-lg-8 col-md-8 col-sm-12 search-results">
@@ -77,5 +84,6 @@
 </div>
 
 {% endblock %} 
-{% block scripts %} 
+{% block scripts %}
+    <script src="{% static "polls/scripts/javascript/poll_display.js" %}"></script>
 {% endblock %}

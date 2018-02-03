@@ -223,12 +223,6 @@ ul#reviews_list {
     }
 }
 
-
-
-#content-container {
-    padding-right: 0;
-}
-
 .slide-up-hidden {
     display: none;
 }
@@ -327,4 +321,27 @@ li.media.business-listing {
 h5.listing-name-header {
     overflow-x: scroll;
     white-space: nowrap;
+}
+
+div#poll-id-display-row {
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+h5#poll-id-header {
+    font-weight: bold;
+    color: orangered;
+}
+
+.id-display-shown {
+    display: block;
+    margin-bottom: -55px;
+}
+
+.id-display-hidden {
+    display: none;
+}
+
+a#invite-btn {
+    margin: 5%;
 }

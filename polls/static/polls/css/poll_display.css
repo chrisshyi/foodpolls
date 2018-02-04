@@ -1,5 +1,5 @@
 #content-container {
-    margin-top: 40px;
+    margin-top: 75px;
 }
 
 div.col-4.btn-col {
@@ -11,7 +11,6 @@ div.col-4.btn-col {
 }
 
 .search-results {
-    margin-top: 35px;
     margin-left: 15%;
 }
 
@@ -130,7 +129,7 @@ label.form-check-label {
     width: 100%;
     margin-left: -15%;
     overflow: auto;
-    height: 72vh;
+    height: 66vh;
 }
 
 #filter-header {
@@ -223,29 +222,6 @@ ul#reviews_list {
     }
 }
 
-.slide-up-hidden {
-    display: none;
-}
-
-.slide-up-shown {
-    z-index: 999;
-    width: 100%;
-    top: 30vh;
-    left: 0;
-    right: 0;
-    bottom: 10vh;
-    position: fixed;
-    display: block;
-    background-color: white;
-    transition: display 2s;
-}
-
-@media screen and (min-width: 768px) {
-    .slide-up-shown {
-        height: 30vh;
-    }
-}
-
 .footer {
     position: absolute;
     display: flex;
@@ -262,22 +238,6 @@ ul#reviews_list {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.overlay-shown {
-    background-color: #383838;
-    display: block;
-    position: absolute;
-    z-index: 20;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 60px;
-    opacity: 0.8;
-}
-
-.overlay-hidden {
-    display: none;
 }
 
 a.btn.btn-primary {
@@ -335,7 +295,6 @@ h5#poll-id-header {
 
 .id-display-shown {
     display: block;
-    margin-bottom: -55px;
 }
 
 .id-display-hidden {

@@ -1,5 +1,5 @@
 #content-container {
-    margin-top: 75px;
+    margin-top: 40px;
 }
 
 div.col-4.btn-col {
@@ -344,4 +344,8 @@ h5#poll-id-header {
 
 a#invite-btn {
     margin: 5%;
+}
+
+a#done-voting-btn {
+    max-width: 100px;
 }

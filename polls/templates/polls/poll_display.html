@@ -87,3 +87,11 @@
 {% block scripts %}
     <script src="{% static "polls/scripts/javascript/poll_display.js" %}"></script>
 {% endblock %}
+{% block footer %}
+    <div class="container footer">
+    <!-- TODO: Change the href for this anchor tag-->
+        <a class="btn btn-primary" href="/generate_poll" role="button" id="done-voting-btn">
+            Done!
+        </a>
+    </div>
+{% endblock %}

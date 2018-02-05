@@ -1,6 +1,6 @@
 /* Set up variable for AJAX calls */
 let csrfToken = Cookies.get('csrftoken');
-
+let httpRequest;
 
 /* Add an event handler to the "Invite Friends" button so that the poll id is displayed */
 document.getElementById("invite-btn").addEventListener("click", () => {
@@ -42,8 +42,7 @@ for (let voteButton of voteButtons) {
 }
 
 document.getElementById("confirm-voting-btn").addEventListener("click", function() {
-    let httpRequest = new XMLHttpRequest();
-    httpRequest.open('POST', '/confirm_votes', true);
+    httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
@@ -53,6 +52,7 @@ document.getElementById("confirm-voting-btn").addEventListener("click", function
             }
         }
     };
+    httpRequest.open('POST', '/confirm_votes', true);
     httpRequest.setRequestHeader('Content-Type', 'application/json');
     httpRequest.setRequestHeader("X-CSRFToken", csrfToken);
     httpRequest.send(JSON.stringify(Array.from(userVotedChoices)));

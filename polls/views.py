@@ -247,10 +247,8 @@ def confirm_votes(request):
     :param request: the HTTP request
     :return: redirection to the poll results page
     """
-    # TODO: json doesn't decode properly
-    votes_data = json.loads(request.body)
     # set of venue ids that represent the venues a user voted for
-    venue_ids = votes_data['voted_choices']
+    venue_ids = json.loads(request.body)
     for venue_id in venue_ids:
         choice = Choice.objects.get(id=venue_id)
         choice.voters.append(request.session['user_name'])

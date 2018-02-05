@@ -42,9 +42,10 @@ def create_question(request):
             # Populate creator information
             new_question.creator_name = request.session['creator_info']['creator_name']
             new_question.creator_email = request.session['creator_info']['creator_email']
-            
-            new_question.voters = ''
+            new_question.all_voters.append(new_question.creator_name)
             new_question.save()
+            # save the creator's name in a session variable, so that the creator can vote as a user as well
+            request.session['user_name'] = new_question.creator_name
             request.session['poll_question_id'] = new_question.id
             return redirect('choices_search')
         else:
@@ -225,8 +226,10 @@ def join_poll(request):
             request.session['poll_question_id'] = poll_id
             user_name = form.cleaned_data['user_name']
             try:
-                Question.objects.get(id=poll_id)
+                question = Question.objects.get(id=poll_id)
                 request.session['user_name'] = user_name
+                question.all_voters.append(user_name)
+                question.save()
                 print(request.session['user_name'])
                 return redirect('view_poll', poll_id=poll_id)
             except Question.DoesNotExist:
@@ -236,3 +239,21 @@ def join_poll(request):
     else:
         form = JoinPollForm()
     return render(request, 'polls/join_poll.html', {'form': form})
+
+
+def confirm_votes(request):
+    """
+    Registers the votes for a user
+    :param request: the HTTP request
+    :return: redirection to the poll results page
+    """
+    # TODO: json doesn't decode properly
+    votes_data = json.loads(request.body)
+    # set of venue ids that represent the venues a user voted for
+    venue_ids = votes_data['voted_choices']
+    for venue_id in venue_ids:
+        choice = Choice.objects.get(id=venue_id)
+        choice.voters.append(request.session['user_name'])
+        choice.save()
+    return HttpResponse()
+

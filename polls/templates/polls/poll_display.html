@@ -1,11 +1,35 @@
 {% extends 'polls/base.html' %} 
 {% load widget_tweaks %} 
-{% load static %} 
+{% load static %}
+
 {% block stylesheets %}
 <link href="{% static "polls/css/poll_display.css" %}" rel="stylesheet" type="text/css"> 
 {% endblock %}
+
 {% block fonts %}
 <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+{% endblock %}
+
+{% block modal %}
+<div class="modal fade" id="votes-confirm-modal" tabindex="-1" role="dialog" aria-labelledby="votes-confirm-modal-title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="votes-confirm-modal-title">Votes Confirmed</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5>Your votes have been confirmed!</h5>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Show Results</button>
+        <button type="button" class="btn btn-secondary">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 {% block content %}
 <div class="container-fluid" id="poll-main-container">
@@ -83,14 +107,15 @@
     </div>
 </div>
 
-{% endblock %} 
+{% endblock %}
+
 {% block scripts %}
     <script src="{% static "polls/scripts/javascript/poll_display.js" %}"></script>
 {% endblock %}
+
 {% block footer %}
     <div class="container footer">
-    <!-- TODO: Change the href for this anchor tag-->
-        <a class="btn btn-primary" href="/generate_poll" role="button" id="done-voting-btn">
+        <a class="btn btn-primary" href="/confirm_votes" role="button" id="confirm-voting-btn">
             Done!
         </a>
     </div>

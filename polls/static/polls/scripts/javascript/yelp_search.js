@@ -278,11 +278,11 @@ function createNewListing(business, index) {
                     alert("There was a problem with the request");
                 }
             }
-        }
+        };
         let addOrDeleteData = {
             "index": index,
             "add": !venuesToAdd.has(index),
-        }
+        };
         venueHttpRequest.open('POST', '/add_or_delete_venue', true);
         venueHttpRequest.setRequestHeader('Content-Type', 'application/json');
         venueHttpRequest.setRequestHeader("X-CSRFToken", csrfToken);

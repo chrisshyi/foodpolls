@@ -1,8 +1,12 @@
+/* Set up variable for AJAX calls */
+let csrfToken = Cookies.get('csrftoken');
+
 /* Add an event handler to the "Invite Friends" button so that the poll id is displayed */
-document.getElementById("invite-btn").addEventListener("click", function() {
+document.getElementById("invite-btn").addEventListener("click", () => {
     let idDisplayRow = document.getElementById("poll-id-display-row");
     idDisplayRow.classList.toggle("id-display-hidden");
     idDisplayRow.classList.toggle("id-display-shown");
+
     let inviteBtn = document.getElementById("invite-btn");
     inviteBtn.classList.toggle("btn-primary");
     inviteBtn.classList.toggle("btn-danger");
@@ -16,8 +20,10 @@ document.getElementById("invite-btn").addEventListener("click", function() {
     }
 });
 
+/* Set of choices (venues) that the users wishes to vote for */
 let userVotedChoices = new Set();
 
+/* Bind voting logic to each "Vote!" button */
 let voteButtons = document.getElementsByClassName("vote-btn");
 for (let voteButton of voteButtons) {
     voteButton.addEventListener("click", function() {
@@ -33,3 +39,24 @@ for (let voteButton of voteButtons) {
         }
     });
 }
+
+document.getElementById("confirm-voting-btn").addEventListener("click", function() {
+    let votingData = {
+        'voted_choices': Array.from(userVotedChoices),
+    };
+    let httpRequest;
+    httpRequest = new XMLHttpRequest();
+    httpRequest.open("POST", "/confirm_votes", true);
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState = XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                $('#votes-confirm-modal').modal('show');
+            } else {
+                alert("There was a problem with the request");
+            }
+        }
+    };
+    httpRequest.setRequestHeader('Content-Type', 'application/json');
+    httpRequest.setRequestHeader("X-CSRFToken", csrfToken);
+    httpRequest.send(JSON.stringify(votingData));
+});

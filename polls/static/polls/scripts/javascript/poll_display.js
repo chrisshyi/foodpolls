@@ -15,3 +15,21 @@ document.getElementById("invite-btn").addEventListener("click", function() {
         venueListings.style.height = "66vh";
     }
 });
+
+let userVotedChoices = new Set();
+
+let voteButtons = document.getElementsByClassName("vote-btn");
+for (let voteButton of voteButtons) {
+    voteButton.addEventListener("click", function() {
+        let choiceID = parseInt(voteButton.id.substring(9, ));
+        voteButton.classList.toggle("btn-danger");
+        voteButton.classList.toggle("btn-success");
+        if (userVotedChoices.has(choiceID)) {
+            voteButton.innerText = "Vote!";
+            userVotedChoices.delete(choiceID);
+        } else {
+            voteButton.innerText = "Undo";
+            userVotedChoices.add(choiceID);
+        }
+    });
+}

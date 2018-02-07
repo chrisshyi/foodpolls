@@ -111,6 +111,11 @@
 
 {% block scripts %}
     <script src="{% static "polls/scripts/javascript/poll_display.js" %}"></script>
+    {% if user_voted %}
+    <script>
+        $('#votes-confirm-modal').modal('show');
+    </script>
+    {% endif %}
 {% endblock %}
 
 {% block footer %}

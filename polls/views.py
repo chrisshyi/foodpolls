@@ -203,6 +203,7 @@ def view_poll(request, poll_id):
         'question': poll_question,
         'choices_list': choices_list,
         'question_id': poll_id,
+        'user_voted': request.session['user_voted']
     }
     return render(request, 'polls/poll_display.html', context)
 
@@ -232,10 +233,12 @@ def join_poll(request):
                 question = Question.objects.get(id=poll_id)
                 request.session['user_name'] = user_name
                 try:
-                    Voter.objects.get(name=user_name, question=question)
+                    voter = Voter.objects.get(name=user_name, question=question)
+                # if the voter doesn't exist, create a new Voter object and register it with the current poll question
                 except Voter.DoesNotExist:
                     voter = Voter(name=user_name, question=question, voted=False)
                     voter.save()
+                request.session['user_voted'] = voter.voted
                 print(request.session['user_name'])
                 return redirect('view_poll', poll_id=poll_id)
             except Question.DoesNotExist:

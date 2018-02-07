@@ -7,11 +7,21 @@ class Question(models.Model):
     pub_date = models.DateField('date published')
     creator_email = models.EmailField(default='')
     creator_name = models.CharField(max_length=25, default='')
-    # list of all the voters
-    all_voters = ArrayField(models.CharField(max_length=25), default=list)
     
     def __str__(self):
         return "{} created by {} on {}".format(self.question_text, self.creator_name, str(self.pub_date))
+
+
+# Need Voter model to make sure each voter in a poll only votes once
+class Voter(models.Model):
+    name = models.CharField(max_length=25)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    voted = models.BooleanField()
+
+    # each name-question combination should be unique. There shouldn't be two voters with the same name
+    # in one question/poll
+    class Meta:
+        unique_together = ("name", "question")
 
 
 class Choice(models.Model):
@@ -32,14 +42,4 @@ class Choice(models.Model):
     # better way to do it for now
     rating_is_integer = models.BooleanField(default=True)
     # List of people who voted for this choice
-    voters = ArrayField(models.CharField(max_length=25), default=list)
-
-
-# Need Voter model to make sure each voter in a poll only votes once
-class Voter(models.Model):
-    name = models.CharField(max_length=25)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    voted = models.BooleanField()
-
-    class Meta:
-        unique_together = ("name", "question")
+    voters = models.ManyToManyField(Voter)

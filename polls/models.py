@@ -23,6 +23,9 @@ class Voter(models.Model):
     class Meta:
         unique_together = ("name", "question")
 
+    def __str__(self):
+        return "Name: {}, Voted: {}".format(self.name, str(self.voted))
+
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -43,3 +46,6 @@ class Choice(models.Model):
     rating_is_integer = models.BooleanField(default=True)
     # List of people who voted for this choice
     voters = models.ManyToManyField(Voter)
+
+    def __str__(self):
+        return "Poll: {}, Venue name: {}".format(self.question.question_text, self.venue_name)

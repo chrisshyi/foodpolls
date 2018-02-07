@@ -6,7 +6,7 @@ from django.contrib import messages
 import json
 import requests
 from django.conf import settings
-from .models import Question, Choice
+from .models import Question, Choice, Voter
 
 
 def index(request):
@@ -42,9 +42,12 @@ def create_question(request):
             # Populate creator information
             new_question.creator_name = request.session['creator_info']['creator_name']
             new_question.creator_email = request.session['creator_info']['creator_email']
-            new_question.all_voters.append(new_question.creator_name)
+
             new_question.save()
+            # the creator of the poll is a voter too
+            creator = Voter(name=new_question.creator_name, question=new_question, voted=False)
             # save the creator's name in a session variable, so that the creator can vote as a user as well
+            creator.save()
             request.session['user_name'] = new_question.creator_name
             request.session['poll_question_id'] = new_question.id
             return redirect('choices_search')
@@ -228,8 +231,11 @@ def join_poll(request):
             try:
                 question = Question.objects.get(id=poll_id)
                 request.session['user_name'] = user_name
-                question.all_voters.append(user_name)
-                question.save()
+                try:
+                    Voter.objects.get(name=user_name, question=question)
+                except Voter.DoesNotExist:
+                    voter = Voter(name=user_name, question=question, voted=False)
+                    voter.save()
                 print(request.session['user_name'])
                 return redirect('view_poll', poll_id=poll_id)
             except Question.DoesNotExist:
@@ -249,10 +255,14 @@ def confirm_votes(request):
     """
     # set of venue ids that represent the venues a user voted for
     venue_ids = json.loads(request.body)
+    voter = Voter.objects.get(question=Question.objects.get(id=request.session['poll_question_id']),
+                              name=request.session['user_name'])
     for venue_id in venue_ids:
         choice = Choice.objects.get(id=venue_id)
-        if request.session['user_name'] not in choice.voters:
-            choice.voters.append(request.session['user_name'])
+        if voter not in choice.voters.all():
+            choice.voters.add(voter)
         choice.save()
+    voter.voted = True
+    voter.save()
     return HttpResponse()
 

@@ -251,7 +251,8 @@ def confirm_votes(request):
     venue_ids = json.loads(request.body)
     for venue_id in venue_ids:
         choice = Choice.objects.get(id=venue_id)
-        choice.voters.append(request.session['user_name'])
+        if request.session['user_name'] not in choice.voters:
+            choice.voters.append(request.session['user_name'])
         choice.save()
     return HttpResponse()
 

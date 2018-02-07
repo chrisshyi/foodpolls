@@ -35,3 +35,11 @@ class Choice(models.Model):
     voters = ArrayField(models.CharField(max_length=25), default=list)
 
 
+# Need Voter model to make sure each voter in a poll only votes once
+class Voter(models.Model):
+    name = models.CharField(max_length=25)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    voted = models.BooleanField()
+
+    class Meta:
+        unique_together = ("name", "question")

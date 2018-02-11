@@ -14,4 +14,6 @@ urlpatterns = [
     url(r'^additional_choice_search$', views.additional_choice_search, name='additional_choice_search'),
     url(r'^join_poll$', views.join_poll, name='join_poll'),
     url(r'^confirm_votes$', views.confirm_votes, name='confirm_votes'),
+    url(r'^poll_results/(?P<poll_id>[0-9]+)$', views.poll_results, name='poll_results'),
+    url(r'^get_voters', views.get_voters, name='get_voters'),
 ]

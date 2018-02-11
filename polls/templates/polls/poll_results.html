@@ -7,7 +7,30 @@
 {% endblock %}
 
 {% block fonts %}
+    <link href="https://fonts.googleapis.com/css?family=Patua+One" rel="stylesheet">
+{% endblock %}
 
+{% block modal %}
+<div class="modal fade" id="votes-list-modal" tabindex="-1" role="dialog" aria-labelledby="votes-confirm-modal-title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="votes-list-modal-title"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul id="voters-list">
+
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-danger" href="#" role="button" id="modal-close-btn">Close</a>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block content %}
@@ -29,7 +52,7 @@
             </a>
         </div>
         <div class="col-4 btn-col">
-            <a class="btn btn-primary btn-sm" href="#" role="button" id="results-btn">
+            <a class="btn btn-primary btn-sm" href="#" role="button" id="reset-btn">
                 Reset My Votes
             </a>
         </div>
@@ -64,7 +87,7 @@
                                     <img class="yelp-logo" src="{% static "polls/img/yelp/Yelp_trademark_RGB.png" %}">
                                 </a>
                                 <span class="vote-result-span">
-
+                                    <a href="#" class="voters-link" id="voters-link-{{ choice.id }}">{{ choice.voters.all|length }}</a> Vote{% if choice.voters.all|length != 1 %}s{% endif %}
                                 </span>
                             </div>
                         </div>
@@ -79,5 +102,5 @@
 </div>
 {% endblock %}
 {% block scripts %}
-
+    <script src="{% static 'polls/scripts/javascript/poll_results.js' %}"></script>
 {% endblock %}

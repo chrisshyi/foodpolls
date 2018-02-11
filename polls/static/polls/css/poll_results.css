@@ -243,6 +243,8 @@ button.add-btn {
     margin-left: -100px;
     margin-top: -5px;
     text-align: center;
+    font-size: 1.3rem;
+    font-family: 'Patua One', cursive;
 }
 
 li.media.business-listing {
@@ -274,4 +276,8 @@ h5#poll-id-header {
 
 a#invite-btn {
     margin: 5%;
+}
+
+a#reset-btn {
+    width: auto;
 }

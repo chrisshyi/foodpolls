@@ -279,3 +279,39 @@ def confirm_votes(request):
         }
     return HttpResponse(json.dumps(response_data))
 
+
+def poll_results(request, poll_id):
+    """
+    Displays the results of the poll
+    :param request: the HTTP request
+    :return: renders the poll result page
+    """
+    poll_question = Question.objects.get(id=poll_id)
+
+    choices_list = Choice.objects.filter(question=poll_question)
+    context = {
+        'question': poll_question,
+        'choices_list': choices_list,
+        'question_id': poll_id,
+        'user_voted': request.session['user_voted'],
+        'user_name': request.session['user_name'],
+    }
+    return render(request, 'polls/poll_results.html', context)
+
+
+def get_voters(request):
+    """
+    Returns the list of voters for a particular venue choice to the front end
+    :param request: the HTTP request
+    :return: An HTTP response with the list of voters for a particular venue in its payload
+    """
+    choice_id = json.loads(request.body)
+    voter_objects_list = Choice.objects.get(id=choice_id).voters.all()
+    voters_list = []
+    for voter_object in voter_objects_list:
+        voters_list.append(voter_object.name)
+    voter_data = {
+        'venue_name': Choice.objects.get(id=choice_id).venue_name,
+        'voters_list': voters_list,
+    }
+    return HttpResponse(json.dumps(voter_data))

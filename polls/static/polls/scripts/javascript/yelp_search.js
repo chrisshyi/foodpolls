@@ -143,7 +143,6 @@ function populateWithResponse() {
                 businessListings.appendChild(createNewListing(business, i));
             }
             renderFilterAndSortOptions();
-            
         }
         else {
             alert('There was a problem with the request.');

@@ -28,6 +28,7 @@ let userVotedChoices = new Set();
 let voteButtons = document.getElementsByClassName("vote-btn");
 for (let voteButton of voteButtons) {
     voteButton.addEventListener("click", function() {
+        /* Retrieve the choice id from the button's HTML id attribute */
         let choiceID = parseInt(voteButton.id.substring(9, ));
         voteButton.classList.toggle("btn-danger");
         voteButton.classList.toggle("btn-success");
@@ -41,6 +42,10 @@ for (let voteButton of voteButtons) {
     });
 }
 
+/*
+ * Add an event listener to send an AJAX request when the "Done!" button is clicked
+ * , in order to register the user's votes
+ */
 document.getElementById("confirm-voting-btn").addEventListener("click", function() {
     httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function() {

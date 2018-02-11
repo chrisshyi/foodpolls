@@ -110,7 +110,7 @@ div#sort-by {
 label.form-check-label {
     display: inline-block;
     white-space: nowrap;
-    margin-left: -9%;
+    margin-left: 5%;
 }
 
 @media screen and (min-width: 768px) {

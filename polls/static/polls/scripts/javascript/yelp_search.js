@@ -489,6 +489,10 @@ function generateCategoryFilters(categoryDiv) {
     }
 
     for (let i = 0; i < 4; i++) {
+        /* If there are less than 4 categories, break before rendering undefined entries */
+        if (i > categoryMap.size - 1) {
+            break;
+        }
         /* If more than 4 categories exist, render a link */
         if (i === 3 && categoryMap.size > 4) {
             let moreLink = document.createElement("a");

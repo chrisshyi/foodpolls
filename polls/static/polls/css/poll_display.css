@@ -11,7 +11,7 @@ div.col-4.btn-col {
 }
 
 .search-results {
-    margin-left: 15%;
+    margin-left: 8%;
 }
 
 #search-row {
@@ -126,8 +126,8 @@ label.form-check-label {
 }
 
 .row.main-content {
-    width: 100%;
-    margin-left: -15%;
+    width: 110%;
+    margin-left: -18%;
     overflow: auto;
     height: 66vh;
 }
@@ -272,6 +272,7 @@ button.add-btn.btn-danger {
     width: 250px;
     margin-left: -100px;
     margin-top: -5px;
+    text-align: center;
 }
 
 li.media.business-listing {

@@ -46,6 +46,10 @@ document.getElementById("confirm-voting-btn").addEventListener("click", function
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
+                response = JSON.parse(httpRequest.responseText);
+                if (response['user_already_voted']) {
+                    document.getElementById("modal-message").innerText = "You've already voted!";
+                }
                 $('#votes-confirm-modal').modal('show');
             } else {
                 alert("There was a problem with the request");

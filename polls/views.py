@@ -203,7 +203,8 @@ def view_poll(request, poll_id):
         'question': poll_question,
         'choices_list': choices_list,
         'question_id': poll_id,
-        'user_voted': request.session['user_voted']
+        'user_voted': request.session['user_voted'],
+        'user_name': request.session['user_name'],
     }
     return render(request, 'polls/poll_display.html', context)
 
@@ -260,12 +261,21 @@ def confirm_votes(request):
     venue_ids = json.loads(request.body)
     voter = Voter.objects.get(question=Question.objects.get(id=request.session['poll_question_id']),
                               name=request.session['user_name'])
-    for venue_id in venue_ids:
-        choice = Choice.objects.get(id=venue_id)
-        if voter not in choice.voters.all():
-            choice.voters.add(voter)
-        choice.save()
-    voter.voted = True
-    voter.save()
-    return HttpResponse()
+    # prevent the voter from voting twice, unless she resets her votes
+    if not voter.voted:
+        for venue_id in venue_ids:
+            choice = Choice.objects.get(id=venue_id)
+            if voter not in choice.voters.all():
+                choice.voters.add(voter)
+            choice.save()
+        voter.voted = True
+        voter.save()
+        response_data = {
+            'user_already_voted': False
+        }
+    else:
+        response_data = {
+            'user_already_voted': True
+        }
+    return HttpResponse(json.dumps(response_data))
 

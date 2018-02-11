@@ -7,3 +7,5 @@ Page: problem
 2. Poll creation page: "Sort By" and "Refine" columns in the "Filter and Sort" menu get pushed down when the "Categories" column has multi-line labels
 
 3. A "Cancel" button needs to be added to the search filter menu
+
+4. "Filter and Sort" menu is messed up on smartphone displays.

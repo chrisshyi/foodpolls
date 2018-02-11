@@ -5,3 +5,5 @@ Page: problem
 1. Index page: "Create Poll" and "Join Poll" buttons squished together when width < ~364 px
 
 2. Poll creation page: "Sort By" and "Refine" columns in the "Filter and Sort" menu get pushed down when the "Categories" column has multi-line labels
+
+3. A "Cancel" button needs to be added to the search filter menu

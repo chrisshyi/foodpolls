@@ -1,0 +1,83 @@
+{% extends 'polls/base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="{% static "polls/css/poll_results.css" %}">
+{% endblock %}
+
+{% block fonts %}
+
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid" id="poll-main-container">
+    <div class="row justify-content-center">
+        <h3>
+            {{ question.question_text }}
+        </h3>
+    </div>
+    <div class="row justify-content-center">
+        <h6>
+            Created by {{ question.creator_name }}
+        </h6>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-4 btn-col">
+            <a class="btn btn-primary btn-sm" href="#" role="button" id="invite-btn">
+                Invite Friends
+            </a>
+        </div>
+        <div class="col-4 btn-col">
+            <a class="btn btn-primary btn-sm" href="#" role="button" id="results-btn">
+                Reset My Votes
+            </a>
+        </div>
+    </div>
+    <div class="row justify-content-center id-display-hidden" id="poll-id-display-row">
+        <p>Use this ID to join the poll!</p>
+        <h5 id="poll-id-header">{{ question_id }}</h5>
+    </div>
+    <div class="row main-content" id="venues-list">
+        <div class="col-lg-8 col-md-8 col-sm-12 search-results">
+            <ul id="business_listings" class="list-unstyled">
+                {% for choice in choices_list %}
+                    <li class="media business-listing">
+                        <img width="1000" height="1000" src="{{ choice.venue_picture_url }}" class="mr-3 business-image">
+                        <div class="media-body">
+                            <h5 class="mt-0 mb-1 listing-name-header">
+                                <a href="{{ choice.yelp_page_url }}" target="_blank">
+                                    {{ choice.venue_name }}
+                                </a>
+                            </h5>
+                            <h6 class="mt-0 mb-1 venue-category">
+                                {{ choice.venue_category }} {% if choice.price_range != '' %}{{ choice.price_range }}{% endif %}
+                            </h6>
+                            <div class="rating-and-logo">
+                                <span></span>
+                                <!-- TODO: find out find to display non-integer ratings using template logic.
+                                 Right now it's just rounded to the nearest integer, I'd like to use
+                                 the half yelp_star images -->
+                                <img class="yelp-stars"
+                                     src="/static/polls/img/yelp/yelp_stars/small/small_{{ choice.avg_rating|floatformat:"0" }}{% if choice.rating_is_integer != True %}_half{% endif %}@2x.png">
+                                <a href="{{ choice.yelp_page_url }}" target="_blank" class="yelp-page-link">
+                                    <img class="yelp-logo" src="{% static "polls/img/yelp/Yelp_trademark_RGB.png" %}">
+                                </a>
+                                <span class="vote-result-span">
+
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Maybe incorporate Google Maps later on -->
+        <div class="col-lg-2 col-md-2 col-sm-12" id="search-google-map">
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+
+{% endblock %}

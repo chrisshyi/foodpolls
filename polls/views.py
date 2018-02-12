@@ -197,7 +197,6 @@ def view_poll(request, poll_id):
     :return: HTTP response displaying the desired poll
     """
     poll_question = Question.objects.get(id=poll_id)
-
     choices_list = Choice.objects.filter(question=poll_question)
     context = {
         'question': poll_question,
@@ -284,6 +283,7 @@ def poll_results(request, poll_id):
     """
     Displays the results of the poll
     :param request: the HTTP request
+    :param poll_id: the id of the poll to be displayed
     :return: renders the poll result page
     """
     poll_question = Question.objects.get(id=poll_id)
@@ -315,3 +315,19 @@ def get_voters(request):
         'voters_list': voters_list,
     }
     return HttpResponse(json.dumps(voter_data))
+
+
+def reset_votes(request):
+    """
+    Resets a user's votes in a poll (allows them to vote again)
+    :param request: the HTTP request
+    :return: redirects the user to the poll display page so they may vote again
+    """
+    voter = Voter.objects.get(question=Question.objects.get(id=request.session['poll_question_id']),
+                              name=request.session['user_name'])  # the voter whose votes need to be reset
+    voted_choices = voter.choice_set.all()  # all the choices that this voter voted for
+    for voted_choice in voted_choices:
+        voted_choice.voters.remove(voter)
+    voter.voted = False
+    voter.save()
+    return redirect(view_poll(request, request.session['poll_question_id']))

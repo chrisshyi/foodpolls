@@ -330,4 +330,4 @@ def reset_votes(request):
         voted_choice.voters.remove(voter)
     voter.voted = False
     voter.save()
-    return redirect(view_poll(request, request.session['poll_question_id']))
+    return redirect('view_poll', request.session['poll_question_id'])

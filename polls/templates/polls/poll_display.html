@@ -25,7 +25,7 @@
       </div>
       <div class="modal-footer">
         <a class="btn btn-primary" href="/poll_results/{{ question_id }}" role="button">Show Results</a>
-        <a class="btn btn-danger" href="#" role="button">Reset My Votes</a>
+        <a class="btn btn-danger" href="/reset_votes" role="button">Reset My Votes</a>
       </div>
     </div>
   </div>
@@ -55,7 +55,7 @@
             </a>
         </div>
         <div class="col-4 btn-col">
-            <a class="btn btn-primary btn-sm" href="#" role="button" id="results-btn">
+            <a class="btn btn-primary btn-sm" href="/poll_results/{{ question_id }}" role="button" id="results-btn">
                See Results 
             </a>
         </div>

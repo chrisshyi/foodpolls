@@ -50,6 +50,7 @@ def create_question(request):
             creator.save()
             request.session['user_name'] = new_question.creator_name
             request.session['poll_question_id'] = new_question.id
+            request.session['user_voted'] = False
             return redirect('choices_search')
         else:
             messages.error(request, 'Invalid information entered')

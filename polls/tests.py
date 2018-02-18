@@ -100,6 +100,14 @@ class PollGenerationTest(TestCase):
                 'rating': 4,
                 'yelp_url': 'www.yelp.ca/sakusushi',
                 'price': '$$$'
+            },
+            2: {
+                'name': "Burgenator",
+                'img_url': 'burgenator.com',
+                'category': "American",
+                'rating': 5,
+                'yelp_url': 'www.yelp.ca/burgenator',
+                'price': '$$'
             }
         }
         session = self.client.session
@@ -129,6 +137,26 @@ class PollGenerationTest(TestCase):
             "add": False,
         }), content_type="application/json", HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertTrue(len(self.client.session['venues_to_add']) == 0)
+
+    def test_add_multiple_venues(self):
+        self.client.post('/add_or_delete_venue', json.dumps({
+            "index": 1,
+            "add": True,
+        }), content_type="application/json", HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.client.post('/add_or_delete_venue', json.dumps({
+            "index": 2,
+            "add": True,
+        }), content_type="application/json", HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertTrue('venues_to_add' in self.client.session)
+        self.assertTrue(len(self.client.session['venues_to_add']) == 2)
+        venue_to_add = self.client.session['venues_to_add'][0]
+        self.assertTrue(venue_to_add['name'] == 'Saku Sushi')
+        self.assertTrue(venue_to_add['rating'] == 4)
+        venue_to_add = self.client.session['venues_to_add'][1]
+        self.assertTrue(venue_to_add['name'] == 'Burgenator')
+        self.assertTrue(venue_to_add['price'] == '$$')
 
     def test_generate_poll(self):
         pass

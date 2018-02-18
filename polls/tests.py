@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait # available since 2.4.0
 from selenium.webdriver.support import expected_conditions as EC # available since 2.26.0
 from .models import Question, Choice, Voter
 from django.contrib.messages import get_messages
+import json
 
 # class SeleniumTest(TestCase):
 #     """
@@ -50,7 +51,7 @@ from django.contrib.messages import get_messages
 #         self.driver.find_element_by_id('search-btn').click()
 
 
-class PollCreationTest(TestCase):
+class QuestionCreationTest(TestCase):
 
     def setUp(self):
         self.client = Client()
@@ -85,3 +86,49 @@ class PollCreationTest(TestCase):
             Voter.objects.get(name='Fred', question=new_question)
         except Voter.DoesNotExist:
             self.assertTrue(False)
+
+
+class PollGenerationTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        venues = {
+            1: {
+                'name': "Saku Sushi",
+                'img_url': "sakusushi.com",
+                'category': "Japanese",
+                'rating': 4,
+                'yelp_url': 'www.yelp.ca/sakusushi',
+                'price': '$$$'
+            }
+        }
+        session = self.client.session
+        session['venue_list'] = venues
+        session.save()
+
+    def test_add_venue(self):
+        self.client.post('/add_or_delete_venue', json.dumps({
+            "index": 1,
+            "add": True,
+        }), content_type="application/json", HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertTrue('venues_to_add' in self.client.session)
+        self.assertTrue(len(self.client.session['venues_to_add']) == 1)
+        venue_to_add = self.client.session['venues_to_add'][0]
+        self.assertTrue(venue_to_add['name'] == 'Saku Sushi')
+        self.assertTrue(venue_to_add['rating'] == 4)
+
+    def test_delete_venue(self):
+        self.client.post('/add_or_delete_venue', json.dumps({
+            "index": 1,
+            "add": True,
+        }), content_type="application/json", HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.client.post('/add_or_delete_venue', json.dumps({
+            "index": 1,
+            "add": False,
+        }), content_type="application/json", HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertTrue(len(self.client.session['venues_to_add']) == 0)
+
+    def test_generate_poll(self):
+        pass

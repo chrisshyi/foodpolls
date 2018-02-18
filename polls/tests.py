@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait # available since 2.4.0
 from selenium.webdriver.support import expected_conditions as EC # available since 2.26.0
 from .models import Question, Choice, Voter
+from django.contrib.messages import get_messages
 
 # class SeleniumTest(TestCase):
 #     """
@@ -60,6 +61,11 @@ class PollCreationTest(TestCase):
         self.assertTrue(req_session['creator_info']['creator_name'] == 'Fred')
         self.assertTrue(req_session['creator_info']['creator_email'] == 'freddy213@gmail.com')
 
+    def test_create_poll_invalid_email(self):
+        self.client.post('/create_poll', {'creator_name': 'Fred', 'creator_email': 'freddy213germail.com'})
+        req_session = self.client.session
+        self.assertTrue('creator_info' not in req_session)
+
     def test_create_question(self):
         session = self.client.session
         session['creator_info'] = {}
@@ -76,6 +82,6 @@ class PollCreationTest(TestCase):
         self.assertTrue(not session['user_voted'])
 
         try:
-            voter_fred = Voter.objects.get(name='Fred', question=new_question)
+            Voter.objects.get(name='Fred', question=new_question)
         except Voter.DoesNotExist:
             self.assertTrue(False)

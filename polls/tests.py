@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC # available sin
 from .models import Question, Choice, Voter
 from django.contrib.messages import get_messages
 import json
+from datetime import date
 
 # class SeleniumTest(TestCase):
 #     """
@@ -52,7 +53,10 @@ import json
 
 
 class QuestionCreationTest(TestCase):
-
+    """
+    Class for testing question creation, i.e. collecting creator information and
+    formulating the poll question
+    """
     def setUp(self):
         self.client = Client()
 
@@ -89,6 +93,10 @@ class QuestionCreationTest(TestCase):
 
 
 class PollGenerationTest(TestCase):
+    """
+    Class for testing poll generation, which resolves around creating
+    choices for the poll
+    """
 
     def setUp(self):
         self.client = Client()
@@ -97,7 +105,7 @@ class PollGenerationTest(TestCase):
                 'name': "Saku Sushi",
                 'img_url': "sakusushi.com",
                 'category': "Japanese",
-                'rating': 4,
+                'rating': 4.0,
                 'yelp_url': 'www.yelp.ca/sakusushi',
                 'price': '$$$'
             },
@@ -105,7 +113,7 @@ class PollGenerationTest(TestCase):
                 'name': "Burgenator",
                 'img_url': 'burgenator.com',
                 'category': "American",
-                'rating': 5,
+                'rating': 5.0,
                 'yelp_url': 'www.yelp.ca/burgenator',
                 'price': '$$'
             }
@@ -158,5 +166,53 @@ class PollGenerationTest(TestCase):
         self.assertTrue(venue_to_add['name'] == 'Burgenator')
         self.assertTrue(venue_to_add['price'] == '$$')
 
-    def test_generate_poll(self):
-        pass
+    def test_generate_poll_no_venues_to_add(self):
+        question = Question(question_text="blah",
+                            pub_date=date.today(),
+                            creator_name='blah',
+                            creator_email='blah@gmail.com')
+        question.save()
+        session = self.client.session
+        session['poll_question_id'] = question.id
+        session['user_voted'] = False
+        session['user_name'] = 'blah'
+        session.save()
+        response = self.client.get('/generate_poll')
+        self.assertRedirects(response, '/polls/{}'.format(question.id))
+
+    def test_generate_poll_two_venues(self):
+        self.client.post('/add_or_delete_venue', json.dumps({
+            "index": 1,
+            "add": True,
+        }), content_type="application/json", HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.client.post('/add_or_delete_venue', json.dumps({
+            "index": 2,
+            "add": True,
+        }), content_type="application/json", HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        question = Question(question_text="blah",
+                            pub_date=date.today(),
+                            creator_name='blah',
+                            creator_email='blah@gmail.com')
+        question.save()
+        session = self.client.session
+        session['poll_question_id'] = question.id
+        session['user_voted'] = False
+        session['user_name'] = 'blah'
+        session.save()
+
+        response = self.client.get('/generate_poll')
+        try:
+            Choice.objects.get(venue_name='Burgenator')
+        except Choice.DoesNotExist:
+            self.assertTrue(False)
+
+        try:
+            Choice.objects.get(venue_name='Saku Sushi')
+        except Choice.DoesNotExist:
+            self.assertTrue(False)
+        session = self.client.session
+        self.assertTrue('venues_to_add' not in session)
+        self.assertTrue('venue_list' not in session)
+        self.assertRedirects(response, '/polls/{}'.format(question.id))

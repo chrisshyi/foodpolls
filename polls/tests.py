@@ -241,7 +241,7 @@ class JoinPollTest(TestCase):
         session = self.client.session
         self.assertTrue('poll_question_id' in session)
         self.assertTrue(session['poll_question_id'] == self.question.id)
-
+        self.assertRedirects(response, '/polls/{}'.format(self.question.id))
         self.assertTrue(not session['user_voted'])
         self.assertTrue('user_name' in session)
         self.assertTrue(session['user_name'] == 'Andria')
@@ -255,10 +255,11 @@ class JoinPollTest(TestCase):
         voter = Voter(name='Andria', question=self.question, voted=True)
         voter.save()
 
-        self.client.post('/join_poll', {
+        response = self.client.post('/join_poll', {
             'user_name': 'Andria',
             'poll_id': self.question.id,
         })
+        self.assertRedirects(response, '/polls/{}'.format(self.question.id))
         session = self.client.session
         self.assertTrue(session['user_name'] == 'Andria')
         self.assertTrue(session['user_voted'])
@@ -268,10 +269,11 @@ class JoinPollTest(TestCase):
         voter = Voter(name='Andria', question=self.question, voted=False)
         voter.save()
 
-        self.client.post('/join_poll', {
+        response = self.client.post('/join_poll', {
             'user_name': 'Andria',
             'poll_id': self.question.id,
         })
+        self.assertRedirects(response, '/polls/{}'.format(self.question.id))
         session = self.client.session
         self.assertTrue(session['user_name'] == 'Andria')
         self.assertTrue(not session['user_voted'])
@@ -287,3 +289,104 @@ class JoinPollTest(TestCase):
         self.assertTrue('poll_question_id' not in session)
         self.assertTrue('user_voted' not in session)
         self.assertTemplateUsed('polls/join_poll.html')
+
+
+class ConfirmVotesTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.question = Question(question_text='Friday Dinner',
+                                 creator_name='Chris',
+                                 creator_email='chris@gmail.com',
+                                 pub_date=date.today())
+        self.question.save()
+        self.choice_one = Choice(question=self.question,
+                                 venue_name='Saku Sushi',
+                                 venue_category='Japanese',
+                                 venue_picture_url='www.yelp.ca/sku.jpg',
+                                 price_range='$$',
+                                 avg_rating=4,
+                                 yelp_page_url='www.yelp.ca/sku',
+                                 rating_is_integer=True,
+                                 )
+        self.choice_one.save()
+        self.choice_two = Choice(question=self.question,
+                                 venue_name='Slab Burgers',
+                                 venue_category='American',
+                                 venue_picture_url='www.yelp.ca/slab.jpg',
+                                 price_range='$$',
+                                 avg_rating=4,
+                                 yelp_page_url='www.yelp.ca/slab',
+                                 rating_is_integer=True)
+        self.choice_two.save()
+        voter_one = Voter(question=self.question,
+                          name='Michael',
+                          voted=False)
+        voter_one.save()
+        voter_two = Voter(question=self.question,
+                          name='Andria',
+                          voted=True)
+        voter_two.save()
+        session = self.client.session
+        session['poll_question_id'] = self.question.id
+        session.save()
+
+    def test_confirm_votes_user_not_voted(self):
+        session = self.client.session
+        session['user_name'] = 'Michael'
+        session.save()
+
+        voter = Voter.objects.get(question=Question.objects.get(id=self.question.id),
+                                  name='Michael')
+        self.assertTrue(not voter.voted)
+        response = self.client.post('/confirm_votes', json.dumps([self.choice_one.id]), content_type='text/json')
+        voter = Voter.objects.get(question=Question.objects.get(id=self.question.id),
+                                  name='Michael')
+        self.assertTrue(voter.voted)
+        choice = Choice.objects.get(question=self.question, venue_name='Saku Sushi')
+        self.assertTrue(voter in choice.voters.all())
+
+        decoded_response = json.loads(response.content)
+        self.assertTrue(not decoded_response['user_already_voted'])
+
+    def test_confirm_votes_user_already_voted(self):
+        session = self.client.session
+        session['user_name'] = 'Andria'
+        session.save()
+
+        voter = Voter.objects.get(question=Question.objects.get(id=self.question.id),
+                                  name='Andria')
+        self.assertTrue(voter.voted)
+        response = self.client.post('/confirm_votes', json.dumps([self.choice_one.id]), content_type='text/json')
+        voter = Voter.objects.get(question=Question.objects.get(id=self.question.id),
+                                  name='Andria')
+        self.assertTrue(voter.voted)
+        choice = Choice.objects.get(question=self.question, venue_name='Saku Sushi')
+        self.assertTrue(voter not in choice.voters.all())
+
+        decoded_response = json.loads(response.content)
+        self.assertTrue(decoded_response['user_already_voted'])
+
+    def test_confirm_two_votes(self):
+        session = self.client.session
+        session['user_name'] = 'Michael'
+        session.save()
+
+        voter = Voter.objects.get(question=Question.objects.get(id=self.question.id),
+                                  name='Michael')
+        self.assertTrue(not voter.voted)
+        response = self.client.post('/confirm_votes',
+                                    json.dumps([self.choice_one.id,
+                                                self.choice_two.id]),
+                                    content_type='text/json')
+        voter = Voter.objects.get(question=Question.objects.get(id=self.question.id),
+                                  name='Michael')
+        self.assertTrue(voter.voted)
+        choice = Choice.objects.get(question=self.question, venue_name='Saku Sushi')
+        self.assertTrue(voter in choice.voters.all())
+
+        choice = Choice.objects.get(question=self.question, venue_name='Slab Burgers')
+        self.assertTrue(voter in choice.voters.all())
+
+        decoded_response = json.loads(response.content)
+        self.assertTrue(not decoded_response['user_already_voted'])

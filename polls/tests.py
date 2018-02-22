@@ -425,7 +425,6 @@ class GetVotersTest(TestCase):
         decoded_response = json.loads(response.content)
         self.assertTrue(decoded_response['venue_name'] == 'Saku Sushi')
         self.assertEquals(len(decoded_response['voters_list']), 1)
-        voter = Voter.objects.get(question=self.question, name='Michael')
         self.assertTrue('Michael' in decoded_response['voters_list'])
 
     def test_get_no_voters(self):
@@ -444,6 +443,84 @@ class GetVotersTest(TestCase):
         decoded_response = json.loads(response.content)
         self.assertTrue(decoded_response['venue_name'] == 'Slab Burgers')
         self.assertEquals(len(decoded_response['voters_list']), 0)
-        voter = Voter.objects.get(question=self.question, name='Michael')
         self.assertTrue('Michael' not in decoded_response['voters_list'])
 
+
+class ResetVotesTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.question = Question(question_text='Friday Dinner',
+                                 creator_name='Chris',
+                                 creator_email='chris@gmail.com',
+                                 pub_date=date.today())
+        self.question.save()
+        self.choice_one = Choice(question=self.question,
+                                 venue_name='Saku Sushi',
+                                 venue_category='Japanese',
+                                 venue_picture_url='www.yelp.ca/sku.jpg',
+                                 price_range='$$',
+                                 avg_rating=4,
+                                 yelp_page_url='www.yelp.ca/sku',
+                                 rating_is_integer=True,
+                                 )
+        self.choice_one.save()
+        self.choice_two = Choice(question=self.question,
+                                 venue_name='Slab Burgers',
+                                 venue_category='American',
+                                 venue_picture_url='www.yelp.ca/slab.jpg',
+                                 price_range='$$',
+                                 avg_rating=4,
+                                 yelp_page_url='www.yelp.ca/slab',
+                                 rating_is_integer=True)
+        self.choice_two.save()
+        self.voter_one = Voter(question=self.question,
+                               name='Michael',
+                               voted=True)
+        self.voter_one.save()
+        self.voter_two = Voter(question=self.question,
+                               name='Andria',
+                               voted=True)
+        self.voter_two.save()
+        self.choice_one.voters.add(self.voter_one)
+        self.choice_one.save()
+
+        self.choice_two.voters.add(self.voter_one)
+        self.choice_two.save()
+
+        session = self.client.session
+        session['poll_question_id'] = self.question.id
+        session.save()
+        session['user_name'] = 'Michael'
+        session.save()
+
+    def test_reset_votes(self):
+
+        self.assertTrue(self.voter_one in self.choice_one.voters.all())
+        self.assertTrue(self.voter_one in self.choice_two.voters.all())
+        response = self.client.post('/reset_votes')
+        self.voter_one = Voter.objects.get(question=self.question,
+                                           name='Michael')
+        self.assertFalse(self.voter_one.voted)
+        session = self.client.session
+        self.assertFalse(session['user_voted'])
+        self.assertFalse(self.voter_one in self.choice_one.voters.all())
+        self.assertFalse(self.voter_one in self.choice_two.voters.all())
+        self.assertRedirects(response, '/polls/{}'.format(self.question.id))
+
+    def test_reset_no_votes(self):
+        session = self.client.session
+        session['user_name'] = 'Andria'
+        session.save()
+
+        self.assertTrue(self.voter_two not in self.choice_one.voters.all())
+        self.assertTrue(self.voter_two not in self.choice_two.voters.all())
+        response = self.client.post('/reset_votes')
+        self.voter_two = Voter.objects.get(question=self.question,
+                                           name='Andria')
+        self.assertFalse(self.voter_two.voted)
+        session = self.client.session
+        self.assertFalse(session['user_voted'])
+        self.assertFalse(self.voter_two in self.choice_one.voters.all())
+        self.assertFalse(self.voter_two in self.choice_two.voters.all())
+        self.assertRedirects(response, '/polls/{}'.format(self.question.id))

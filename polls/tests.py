@@ -276,3 +276,14 @@ class JoinPollTest(TestCase):
         self.assertTrue(session['user_name'] == 'Andria')
         self.assertTrue(not session['user_voted'])
         self.assertTrue(session['poll_question_id'] == self.question.id)
+
+    def test_join_poll_invalid_poll_id(self):
+        self.client.post('/join_poll', {
+            'user_name': 'Andria',
+            'poll_id': (self.question.id + 1),
+        })
+        session = self.client.session
+        self.assertTrue('user_name' not in session)
+        self.assertTrue('poll_question_id' not in session)
+        self.assertTrue('user_voted' not in session)
+        self.assertTemplateUsed('polls/join_poll.html')

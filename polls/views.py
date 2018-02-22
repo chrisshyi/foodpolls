@@ -228,10 +228,10 @@ def join_poll(request):
         form = JoinPollForm(request.POST)
         if form.is_valid():
             poll_id = form.cleaned_data['poll_id']
-            request.session['poll_question_id'] = poll_id
             user_name = form.cleaned_data['user_name']
             try:
                 question = Question.objects.get(id=poll_id)
+                request.session['poll_question_id'] = poll_id
                 request.session['user_name'] = user_name
                 try:
                     voter = Voter.objects.get(name=user_name, question=question)

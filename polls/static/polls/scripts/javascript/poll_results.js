@@ -20,6 +20,10 @@ document.getElementById("invite-btn").addEventListener("click", () => {
     }
 });
 
+/*
+ * Add event listeners for displaying the list of voters for a
+ * particular venue
+ */
 let voterLinks = document.getElementsByClassName("voters-link");
 for (let voterLink of voterLinks) {
     voterLink.addEventListener("click", function() {

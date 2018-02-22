@@ -308,7 +308,7 @@ def get_voters(request):
     """
     choice_id = json.loads(request.body)
     voter_objects_list = Choice.objects.get(id=choice_id).voters.all()
-    voters_list = []
+    voters_list = []  # voters_list is a list of strings, not Voter objects
     for voter_object in voter_objects_list:
         voters_list.append(voter_object.name)
     voter_data = {

@@ -216,3 +216,63 @@ class PollGenerationTest(TestCase):
         self.assertTrue('venues_to_add' not in session)
         self.assertTrue('venue_list' not in session)
         self.assertRedirects(response, '/polls/{}'.format(question.id))
+
+
+class JoinPollTest(TestCase):
+
+    def setUp(self):
+        self.question = Question(
+            question_text="Friday Dinner",
+            pub_date=date.today(),
+            creator_email="chris@gmail.com",
+            creator_name='Chris'
+        )
+        self.question.save()
+        self.client = Client()
+
+    def test_join_poll_new_user(self):
+        response = self.client.get('/join_poll')
+        self.assertTemplateUsed(response, 'polls/join_poll.html')
+
+        response = self.client.post('/join_poll', {
+            'poll_id': self.question.id,
+            'user_name': 'Andria',
+        })
+        session = self.client.session
+        self.assertTrue('poll_question_id' in session)
+        self.assertTrue(session['poll_question_id'] == self.question.id)
+
+        self.assertTrue(not session['user_voted'])
+        self.assertTrue('user_name' in session)
+        self.assertTrue(session['user_name'] == 'Andria')
+
+        try:
+            Voter.objects.get(name='Andria', question=self.question)
+        except Voter.DoesNotExist:
+            self.assertTrue(False)
+
+    def test_join_poll_existing_user_voted(self):
+        voter = Voter(name='Andria', question=self.question, voted=True)
+        voter.save()
+
+        self.client.post('/join_poll', {
+            'user_name': 'Andria',
+            'poll_id': self.question.id,
+        })
+        session = self.client.session
+        self.assertTrue(session['user_name'] == 'Andria')
+        self.assertTrue(session['user_voted'])
+        self.assertTrue(session['poll_question_id'] == self.question.id)
+
+    def test_join_poll_existing_user_not_voted(self):
+        voter = Voter(name='Andria', question=self.question, voted=False)
+        voter.save()
+
+        self.client.post('/join_poll', {
+            'user_name': 'Andria',
+            'poll_id': self.question.id,
+        })
+        session = self.client.session
+        self.assertTrue(session['user_name'] == 'Andria')
+        self.assertTrue(not session['user_voted'])
+        self.assertTrue(session['poll_question_id'] == self.question.id)

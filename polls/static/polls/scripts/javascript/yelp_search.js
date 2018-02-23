@@ -25,6 +25,7 @@ document.getElementById("search-btn").addEventListener("click", function() {
     if (searchTerm.value !== "" && city.value !== "") {
         categoryMap.clear();
         selectedCategories.clear();
+        venuesToAdd.clear();
         makeSearchRequest(searchTerm.value, city.value)
     }
 });

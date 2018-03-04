@@ -62,6 +62,12 @@ h5.listing-name-header {
     font-size: small;
 }
 
+@media screen and (min-width: 992px) {
+    .review-body {
+        font-size: medium;
+    }
+}
+
 .review-link {
     color: lightskyblue;
     display: inline-block;

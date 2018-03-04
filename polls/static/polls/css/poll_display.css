@@ -4,6 +4,25 @@
 
 div.col-4.btn-col {
     padding-left: 1px;
+    text-align: center;
+}
+
+a.btn.btn-primary {
+    flex: auto;
+    margin: 5%;
+    width: 28vw;
+}
+
+@media screen and (max-width: 360px) {
+    a.btn.btn-primary {
+        font-size: 12px;
+    }
+}
+
+@media screen and (min-width: 575px) {
+    a.btn.btn-primary {
+        width: 160px;
+    }
 }
 
 .btn-sm {
@@ -11,7 +30,8 @@ div.col-4.btn-col {
 }
 
 .search-results {
-    margin-left: 8%;
+    padding-left: 15%;
+    padding-right: 15%;
 }
 
 #search-row {
@@ -179,11 +199,6 @@ ul#reviews_list {
         height: 125px;
     }
 
-    .reviewer-img {
-        width: 40px;
-        height: 40px;
-    }
-
     .row.main-content {
         margin-left: 0;
     }
@@ -192,9 +207,11 @@ ul#reviews_list {
         width: 720px;
         height: 202px;
     }
+}
 
-    .filter-sort-container {
-        max-width: 25%;
+@media screen and (min-width: 370px) {
+    .row.main-content {
+        
     }
 }
 
@@ -240,10 +257,7 @@ ul#reviews_list {
     justify-content: center;
 }
 
-a.btn.btn-primary {
-    flex: auto;
-    margin: 5%;
-}
+
 
 a#toggle-filter-sort-btn {
     max-width: 125px;

@@ -5,3 +5,11 @@
 ul.messages {
     margin-top: 15px;
 }
+
+#join-poll-btn {
+    font-size: 4.5vw;
+}
+
+#index-create-poll-btn {
+    font-size: 4.5vw;
+}

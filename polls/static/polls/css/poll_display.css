@@ -209,9 +209,21 @@ ul#reviews_list {
     }
 }
 
-@media screen and (min-width: 370px) {
+@media screen and (min-width: 460px) {
     .row.main-content {
-        
+        margin-left: 0;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .row.main-content {
+        margin-left: 12vw;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .row.main-content {
+        margin-left: 17vw;
     }
 }
 

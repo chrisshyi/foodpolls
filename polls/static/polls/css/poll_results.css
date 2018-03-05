@@ -4,6 +4,7 @@
 
 div.col-4.btn-col {
     padding-left: 1px;
+    text-align: center;
 }
 
 .btn-sm {
@@ -16,6 +17,12 @@ div.col-4.btn-col {
 
 #search-row {
     margin: 0;
+}
+
+@media screen and (min-width: 992px) {
+    .search-results {
+        margin-left: 20%;
+    }
 }
 
 .yelp-logo {

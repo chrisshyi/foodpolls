@@ -13,3 +13,13 @@ ul.messages {
 #index-create-poll-btn {
     font-size: 4.5vw;
 }
+
+@media screen and (min-width: 354px) {
+    #join-poll-btn {
+        font-size: medium;
+    }
+
+    #index-create-poll-btn {
+        font-size: medium;
+    }
+}

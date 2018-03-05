@@ -19,6 +19,12 @@ div.col-4.btn-col {
     margin: 0;
 }
 
+@media screen and (min-width: 403px) {
+    .search-results {
+        margin-left: 18%;
+    }
+}
+
 @media screen and (min-width: 992px) {
     .search-results {
         margin-left: 20%;

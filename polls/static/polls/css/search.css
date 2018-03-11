@@ -241,6 +241,8 @@ ul#reviews_list {
     bottom: 10vh;
     position: fixed;
     display: block;
+    font-size: 0.95em;
+    font-family: 'Itim', cursive;
     background-color: white;
     transition: display 2s; 
 }

@@ -267,6 +267,7 @@ def confirm_votes(request):
             choice = Choice.objects.get(id=venue_id)
             if voter not in choice.voters.all():
                 choice.voters.add(voter)
+                choice.num_voters += 1
             choice.save()
         voter.voted = True
         voter.save()
@@ -288,15 +289,10 @@ def poll_results(request, poll_id):
     :return: renders the poll result page
     """
     poll_question = Question.objects.get(id=poll_id)
-    # choices_list = []
-    choices_list = Choice.objects.filter(question=poll_question)
-    # for choice_object in choice_objects:
-    #     choices_list.append(choice_object)
-    # choices_list.sort(key=lambda choice: choice.voters)
-    # TODO: need to sort the choices_list somehow
+    choice_objects = Choice.objects.filter(question=poll_question).order_by('-num_voters')
     context = {
         'question': poll_question,
-        'choices_list': choices_list,
+        'choices_list': choice_objects,
         'question_id': poll_id,
         'user_voted': request.session['user_voted'],
         'user_name': request.session['user_name'],
@@ -333,6 +329,8 @@ def reset_votes(request):
     voted_choices = voter.choice_set.all()  # all the choices that this voter voted for
     for voted_choice in voted_choices:
         voted_choice.voters.remove(voter)
+        voted_choice.num_voters -= 1
+        voted_choice.save()
     voter.voted = False
     voter.save()
     request.session['user_voted'] = False

@@ -45,6 +45,7 @@ class Choice(models.Model):
     rating_is_integer = models.BooleanField(default=True)
     # List of people who voted for this choice
     voters = models.ManyToManyField(Voter)
+    num_voters = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
         return "Poll: {}, Venue name: {}".format(self.question.question_text, self.venue_name)

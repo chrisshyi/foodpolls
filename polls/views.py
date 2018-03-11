@@ -290,6 +290,7 @@ def poll_results(request, poll_id):
     poll_question = Question.objects.get(id=poll_id)
 
     choices_list = Choice.objects.filter(question=poll_question)
+    # TODO: need to sort the choices_list somehow
     context = {
         'question': poll_question,
         'choices_list': choices_list,

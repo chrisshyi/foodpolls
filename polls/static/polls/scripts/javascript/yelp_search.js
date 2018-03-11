@@ -88,6 +88,19 @@ document.getElementById("refine-btn").addEventListener("click", function() {
     makeSearchRequest(searchTerm.value, city.value, categoryFilters, priceFilters, sortBy);
 });
 
+/**
+ * Add event listener to the "Cancel" button in the filter and sort menu so that
+ * users can retract it
+ */
+document.getElementById("filter-cancel-btn").addEventListener("click", function() {
+    let slideUpDiv = document.getElementById("slide-up-div");
+    slideUpDiv.classList.toggle("slide-up-hidden");
+    slideUpDiv.classList.toggle("slide-up-shown");
+    let overlay = document.getElementById("overlay");
+    overlay.classList.toggle("overlay-hidden");
+    overlay.classList.toggle("overlay-shown");
+});
+
 
 /**
  * Make an AJAX request to the server for restaurant data based on search parameters
@@ -184,7 +197,7 @@ function createNewListing(business, index) {
     let mediaHeader = document.createElement("h5");
     mediaHeader.classList.add("mt-0");
     mediaHeader.classList.add("mb-1");
-    mediaHeader.classList.add("listing-name-header")
+    mediaHeader.classList.add("listing-name-header");
     /* The category for the venue */
     let subHeader = document.createElement("h6");
     subHeader.classList.add("mt-0");
@@ -502,7 +515,7 @@ function generateCategoryFilters(categoryDiv) {
             moreLink.innerText = "More Categories";
             moreLink.addEventListener("click", function() {
                 renderCategoryPopup();
-                $('#category-modal').modal('toggle')
+                $('#category-modal').modal('toggle');
             });
             categoryDiv.appendChild(moreLink);
             break;
@@ -603,7 +616,7 @@ function renderSortByOptions(sortByDiv) {
         let inputElem = createNewElement("input", ["form-check-input", "sort-by-radio"], inputAttributes);
         inputDiv.appendChild(inputElem);
 
-        labelAttributes = new Map();
+        let labelAttributes = new Map();
         labelAttributes.set("for", "sortByOption" + counter);
         let inputLabel = createNewElement("label", ["form-check-label"], labelAttributes);
         inputLabel.innerText = key;

@@ -235,7 +235,7 @@ ul#reviews_list {
 .slide-up-shown {
     z-index: 999;
     width: 100%;
-    top: 30vh;
+    top: 25vh;
     left: 0;
     right: 0;
     bottom: 10vh;
@@ -267,8 +267,15 @@ ul#reviews_list {
 
 #refine-btn-container {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding-top: 25px;
+}
+
+button#refine-btn {
+    margin-bottom: 25px;
+    min-width: 73px;
 }
 
 .overlay-shown {

@@ -306,7 +306,7 @@ li.media.business-listing {
 }
 
 h5.listing-name-header {
-    overflow-x: scroll;
+    overflow-x: auto;
     white-space: nowrap;
 }
 

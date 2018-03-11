@@ -288,8 +288,11 @@ def poll_results(request, poll_id):
     :return: renders the poll result page
     """
     poll_question = Question.objects.get(id=poll_id)
-
+    # choices_list = []
     choices_list = Choice.objects.filter(question=poll_question)
+    # for choice_object in choice_objects:
+    #     choices_list.append(choice_object)
+    # choices_list.sort(key=lambda choice: choice.voters)
     # TODO: need to sort the choices_list somehow
     context = {
         'question': poll_question,

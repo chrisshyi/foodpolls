@@ -483,9 +483,11 @@ class ResetVotesTest(TestCase):
                                voted=True)
         self.voter_two.save()
         self.choice_one.voters.add(self.voter_one)
+        self.choice_one.num_voters += 1
         self.choice_one.save()
 
         self.choice_two.voters.add(self.voter_one)
+        self.choice_two.num_voters += 1
         self.choice_two.save()
 
         session = self.client.session
@@ -498,12 +500,19 @@ class ResetVotesTest(TestCase):
 
         self.assertTrue(self.voter_one in self.choice_one.voters.all())
         self.assertTrue(self.voter_one in self.choice_two.voters.all())
+        reset_choices = self.voter_one.choice_set.all()
+        for reset_choice in reset_choices:
+            self.assertEqual(reset_choice.num_voters, 1)
         response = self.client.post('/reset_votes')
         self.voter_one = Voter.objects.get(question=self.question,
                                            name='Michael')
+
         self.assertFalse(self.voter_one.voted)
         session = self.client.session
         self.assertFalse(session['user_voted'])
+        reset_choices = self.voter_one.choice_set.all()
+        for reset_choice in reset_choices:
+            self.assertEqual(reset_choice.num_voters, 0)
         self.assertFalse(self.voter_one in self.choice_one.voters.all())
         self.assertFalse(self.voter_one in self.choice_two.voters.all())
         self.assertRedirects(response, '/polls/{}'.format(self.question.id))

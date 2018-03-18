@@ -294,3 +294,9 @@ a#invite-btn {
 a#reset-btn {
     width: auto;
 }
+
+@media screen and (max-width: 360px) {
+    a.btn.btn-primary {
+        font-size: 12px;
+    }
+}

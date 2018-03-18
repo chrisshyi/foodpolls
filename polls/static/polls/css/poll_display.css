@@ -149,7 +149,7 @@ label.form-check-label {
     width: 110%;
     margin-left: -18%;
     overflow: auto;
-    height: 66vh;
+    height: 60vh;
 }
 
 #filter-header {
@@ -337,6 +337,8 @@ a#confirm-voting-btn {
     font-size: 0.9em;
 }
 
-#show-result-btn {
-    font-size: 1rem;
+@media screen and (max-width: 346px) {
+    .modal-footer a.btn {
+        font-size: 12px;
+    }
 }

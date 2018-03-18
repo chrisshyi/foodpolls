@@ -20,12 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'm4$$qoz*f=&s4kmxx(pmwza%hl(98&#ba230tz1%$*--n*ih24'
+SECRET_KEY = os.environ['django_secret']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['159.203.7.141', '0.0.0.0:8000',]
 # Be sure to add those to Heroku when deploying
 YELP_API_KEY = os.environ['yelp_api_key']
 

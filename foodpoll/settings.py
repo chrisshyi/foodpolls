@@ -25,7 +25,7 @@ SECRET_KEY = os.environ['django_secret']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['159.203.7.141', '0.0.0.0:8000',]
+ALLOWED_HOSTS = ['127.0.0.1', '159.203.7.141', '0.0.0.0:8000',]
 # Be sure to add those to Heroku when deploying
 YELP_API_KEY = os.environ['yelp_api_key']
 

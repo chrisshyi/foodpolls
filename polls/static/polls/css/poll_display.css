@@ -14,7 +14,7 @@ a.btn.btn-primary {
 }
 
 @media screen and (max-width: 360px) {
-    a.btn.btn-primary {
+    a.btn {
         font-size: 12px;
     }
 }
@@ -332,9 +332,9 @@ a#invite-btn {
     margin: 5%;
 }
 
-a#confirm-voting-btn {
+button#confirm-voting-btn {
     max-width: 100px;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 @media screen and (max-width: 346px) {

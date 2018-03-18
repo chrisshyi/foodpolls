@@ -10,6 +10,10 @@ ul.messages {
     font-size: 4.5vw;
 }
 
+html {
+    height: 100%;
+}
+
 #index-create-poll-btn {
     font-size: 4.5vw;
 }

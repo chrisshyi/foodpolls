@@ -49,3 +49,7 @@ class Choice(models.Model):
 
     def __str__(self):
         return "Poll: {}, Venue name: {}".format(self.question.question_text, self.venue_name)
+
+    class Meta:
+        unique_together = ('question', 'venue_name')
+

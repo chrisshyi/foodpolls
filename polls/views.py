@@ -147,17 +147,20 @@ def generate_poll(request):
 
     # Create Choice objects and save them to database
     for venue in venues:
-        choice = Choice(question=poll_question,
-                        venue_name=venue['name'],
-                        venue_category=venue['category'],
-                        venue_picture_url=venue['img_url'],
-                        avg_rating=int(venue['rating']),
-                        yelp_page_url=venue['yelp_url'],
-                        )
-        if 'price' in venue:
-            choice.price_range = venue['price']
-        choice.rating_is_integer = venue['rating'].is_integer()
-        choice.save()
+        try:
+            retrieved_choice = Choice.objects.get(question=poll_question, venue_name=venue['name'])
+        except Choice.DoesNotExist:
+            choice = Choice(question=poll_question,
+                            venue_name=venue['name'],
+                            venue_category=venue['category'],
+                            venue_picture_url=venue['img_url'],
+                            avg_rating=int(venue['rating']),
+                            yelp_page_url=venue['yelp_url'],
+                            )
+            if 'price' in venue:
+                choice.price_range = venue['price']
+            choice.rating_is_integer = venue['rating'].is_integer()
+            choice.save()
     # clear these two session variables so that they won't conflict with additional choices that users
     # might want to add
     del request.session['venues_to_add']
@@ -185,7 +188,7 @@ def add_or_delete_venue(request):
     else:
         venues_to_add.remove(venue)
     # need to reassign the session variable since Django only saves session information when
-    # any of the session dictionary values have been assigned to deleted.
+    # any of the session dictionary values have been assigned or deleted.
     request.session['venues_to_add'] = venues_to_add
     return HttpResponse("venue successfully added/deleted")
 

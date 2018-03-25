@@ -4,7 +4,6 @@ from django.db import models
 class Question(models.Model):
     question_text = models.CharField(max_length=60)
     pub_date = models.DateField('date published')
-    creator_email = models.EmailField(default='')
     creator_name = models.CharField(max_length=25, default='')
     
     def __str__(self):

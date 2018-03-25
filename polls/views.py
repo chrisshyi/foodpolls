@@ -21,7 +21,6 @@ def create_poll(request):
             # so it can be retrieved later
             creator_info = {
                 'creator_name': form.cleaned_data['creator_name'],
-                'creator_email': form.cleaned_data['creator_email'],
             }
             request.session['creator_info'] = creator_info
             return redirect('create_question')
@@ -41,7 +40,6 @@ def create_question(request):
             new_question.pub_date = date.today()
             # Populate creator information
             new_question.creator_name = request.session['creator_info']['creator_name']
-            new_question.creator_email = request.session['creator_info']['creator_email']
 
             new_question.save()
             # the creator of the poll is a voter too
@@ -133,7 +131,7 @@ def get_reviews(request):
 
 def generate_poll(request):
     """
-    Generates a poll based on creator information (name and email), as well as 
+    Generates a poll based on creator information, as well as
     venue choices
     :param request: the HTTP request object
     :return: a redirection to display the newly created poll

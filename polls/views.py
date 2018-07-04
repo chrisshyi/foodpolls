@@ -8,6 +8,7 @@ import requests
 from django.conf import settings
 from .models import Question, Choice, Voter
 
+VENUE_LIMIT = 15
 
 def index(request):
     return render(request, 'polls/index.html')
@@ -81,7 +82,7 @@ def search_for_venues(request):
     params = {
         'term': search_term,
         'location': city,
-        'limit': 15,
+        'limit': VENUE_LIMIT,
     }
     # Add optional parameters only if they're in the AJAX request
     for param in optional_params:
@@ -91,44 +92,35 @@ def search_for_venues(request):
     yelp_search_response = \
         requests.get('https://api.yelp.com/v3/businesses/search', headers=headers, params=params).json()
     businesses_list = yelp_search_response['businesses']
-    venues = {}
+    venues_list = []
 
     for i in range(len(businesses_list)):
         business = businesses_list[i]
-        print("venue number: " + str(i))
-        venues[i] = {
+        venue_dict = {
                      'name': business['name'],
                      'img_url': business['image_url'],
-                     'category': business['categories'][0]['title'],
+                     'category': business['categories'][0],
                      'rating': business['rating'],
                      'yelp_url': business['url'],
+                     'review_count': business['review_count'],
                     }
         if 'price' in business:
-            venues[i]['price'] = business['price']
+            venue_dict['price'] = business['price']
+        business_id = business['id']
+        # form the request string
+        request_string = "https://api.yelp.com/v3/businesses/{}/reviews".format(business_id)
+        # put authorization tokens in the header
+        headers = {'Authorization': "Bearer " + settings.YELP_API_KEY,
+                   'User-agent': 'foodpolls; contact: chrisshyi13@gmail.com'}
+
+        review_response = requests.get(request_string, headers=headers).json()
+        venue_dict['reviews'] = review_response['reviews']  # list of reviews
+        venues_list.append(venue_dict)
+
     # TODO: why store this in a session??
     #  Needed later for poll creation, though this will be removed when refactored
-    request.session['venue_list'] = venues
-    for key, value in request.session['venue_list'].items():
-        print(value['name'])
-        print(value['rating'])
-    return HttpResponse(json.dumps(yelp_search_response))  # TODO: Use Jsonresponse instead
-
-
-def get_reviews(request):
-    """
-    Retrieves three reviews for a certain venue
-    :param request: the HTTP request
-    :return: a response object encapsulating the reviews
-    """
-    business_id = json.loads(request.body)['business_id']
-    # form the request string
-    request_string = "https://api.yelp.com/v3/businesses/{}/reviews".format(business_id)
-    # put authorization tokens in the header
-    headers = {'Authorization': "Bearer " + settings.YELP_API_KEY,
-               'User-agent': 'foodpolls; contact: chrisshyi13@gmail.com'}
-
-    response = requests.get(request_string, headers=headers).json()
-    return HttpResponse(json.dumps(response)) # TODO: Use Jsonresponse
+    # request.session['venue_list'] = venues
+    return HttpResponse(json.dumps({'venues_list': venues_list}))  # TODO: Use Jsonresponse instead
 
 
 def generate_poll(request):

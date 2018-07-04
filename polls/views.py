@@ -105,11 +105,13 @@ def search_for_venues(request):
                     }
         if 'price' in business:
             venues[i]['price'] = business['price']
+    # TODO: why store this in a session??
+    #  Needed later for poll creation, though this will be removed when refactored
     request.session['venue_list'] = venues
     for key, value in request.session['venue_list'].items():
         print(value['name'])
         print(value['rating'])
-    return HttpResponse(json.dumps(yelp_search_response))
+    return HttpResponse(json.dumps(yelp_search_response))  # TODO: Use Jsonresponse instead
 
 
 def get_reviews(request):
@@ -126,7 +128,7 @@ def get_reviews(request):
                'User-agent': 'foodpolls; contact: chrisshyi13@gmail.com'}
 
     response = requests.get(request_string, headers=headers).json()
-    return HttpResponse(json.dumps(response))
+    return HttpResponse(json.dumps(response)) # TODO: Use Jsonresponse
 
 
 def generate_poll(request):

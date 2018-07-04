@@ -255,8 +255,7 @@ function createNewListing(business, index) {
     yelpLogo.setAttribute("src", "/static/polls/img/yelp/Yelp_trademark_RGB.png");
     yelpPageLink.appendChild(yelpLogo);
     ratingAndLogo.appendChild(yelpPageLink);
-    // innerSpan.appendChild(yelpPageLink);
-    /* TODO: Add a "Add to Poll" button for each listing */
+
     let countAndAddSpan = document.createElement("span");
     countAndAddSpan.classList.add("add-btn-span");
 

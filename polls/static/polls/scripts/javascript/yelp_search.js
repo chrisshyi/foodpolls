@@ -10,10 +10,23 @@ let csrfToken = Cookies.get('csrftoken');
 let httpRequest;
 let response;
 /*
- * A set of integers corresponding to the venues that a user wishes to add to the poll. Each number
- * corresponds to the index of a venue in a list of venues stored in a session variable
+ * Used to keep track of venues to be added to the poll,
+ * maps venue yelp id -> venue information object
+ *
+ * example:
+ * key    "E8RJkjfdcwgtyoPMjQ_Olg"
+ * value
+ * {
+ *   "name": "Sunset Grill",
+ *   "category": "Breakfast",
+ *   "image_url": "some_url",
+ *   "price_range": "4",
+ *   "avg_rating": 5,
+ *   "yelp_page_url": "some_url",
+ * }
+ *
  */
-let venuesToAdd = new Set();
+let venuesToAdd = new Map();
 /**
  * Maps the display name of a category (string) to its alias (string, used for Yelp API calls)
  */
@@ -25,7 +38,6 @@ document.getElementById("search-btn").addEventListener("click", function() {
     if (searchTerm.value !== "" && city.value !== "") {
         categoryMap.clear();
         selectedCategories.clear();
-        venuesToAdd.clear();
         makeSearchRequest(searchTerm.value, city.value)
     }
 });
@@ -51,28 +63,48 @@ document.getElementById("select-category-btn").addEventListener("click", functio
     $('#category-modal').modal('toggle');
 });
 
+
+/**
+ * Adds an event listener to the create poll button that fires off an AJAX
+ * request to create the poll, with venue information in its payload
+ *
+ * Bind once the window has finished loading
+ */
+window.addEventListener("load", function() {
+    document.getElementById("create-poll-btn").addEventListener("click", function() {
+        let venuesList = Array.from(venuesToAdd.values());
+        let createPollRequest = new XMLHttpRequest();
+        createPollRequest.open('POST', '/generate_poll', true);
+        createPollRequest.setRequestHeader('Content-Type', 'application/json');
+        createPollRequest.setRequestHeader("X-CSRFToken", csrfToken);
+        createPollRequest.send(JSON.stringify(venuesList));
+    });
+});
+
+
 /* 
  * Adds a click event listener to the filter/sort toggle button so that it toggles a pop-up menu
  * when clicked
  */
-document.getElementById("toggle-filter-sort-btn").addEventListener("click", function() {
-    if (categoryMap.size !== 0) {
-        let slideUpDiv = document.getElementById("slide-up-div");
-        slideUpDiv.classList.toggle("slide-up-hidden");
-        slideUpDiv.classList.toggle("slide-up-shown");
-        let overlay = document.getElementById("overlay");
-        overlay.classList.toggle("overlay-hidden");
-        overlay.classList.toggle("overlay-shown");
-    }    
+window.addEventListener("load", function() {
+    document.getElementById("toggle-filter-sort-btn").addEventListener("click", function() {
+        if (categoryMap.size !== 0) {
+            let slideUpDiv = document.getElementById("slide-up-div");
+            slideUpDiv.classList.toggle("slide-up-hidden");
+            slideUpDiv.classList.toggle("slide-up-shown");
+            let overlay = document.getElementById("overlay");
+            overlay.classList.toggle("overlay-hidden");
+            overlay.classList.toggle("overlay-shown");
+        }
+    });
 });
+
 
 /*
  * Adds a click event listener to the "Refine" button in the filter and sort pop-up. Sends an AJAX
  * request to the server for filtered and/or sorted results
  */
 document.getElementById("refine-btn").addEventListener("click", function() {
-    /* flush out the previous selected venues to add when refining a search */
-    venuesToAdd = new Set();
     /* Retract the filter/sort pop-up and the grey overlay */
     let slideUpDiv = document.getElementById("slide-up-div");
     slideUpDiv.classList.toggle("slide-up-hidden");
@@ -81,6 +113,7 @@ document.getElementById("refine-btn").addEventListener("click", function() {
     overlay.classList.toggle("overlay-hidden");
     overlay.classList.toggle("overlay-shown");
 
+    // gather filter and sort information
     let categoryFilters = getFilterOptions("category-checkbox");
     let priceFilters = getFilterOptions("price-checkbox");
     let sortBy = getSortByOptions();
@@ -172,8 +205,8 @@ function populateWithResponse() {
  * @return a new <li> element with Yelp data about the business of interest
  */
 function createNewListing(business, index) {
-    for (let i = 0; i < business['category'].length; i++) {
-        let category = business['category'][i];
+    for (let i = 0; i < business['categories'].length; i++) {
+        let category = business['categories'][i];
         categoryMap.set(category['title'], category['alias']);
     }
     /* innerHttpRequest object will be used for an AJAX call to get reviews for a listing */
@@ -202,7 +235,7 @@ function createNewListing(business, index) {
     let subHeader = document.createElement("h6");
     subHeader.classList.add("mt-0");
     subHeader.classList.add("mb-1");
-    subHeader.innerText = business['category']['title'];
+    subHeader.innerText = business['categories'][0]['title'];
     subHeader.innerText += " " + business['price'];
     subHeader.classList.add("venue-category");
 
@@ -267,40 +300,31 @@ function createNewListing(business, index) {
     addBtn.classList.add("btn", "btn-success", "btn-sm", "add-btn");
     addBtn.setAttribute("id", "add-btn-" + index);
 
-    /* The XHR object that will be used to add/delete venues from the poll through AJAX calls */
-    let venueHttpRequest;
-
+    let businessId = business['yelp_id'];
     addBtn.innerText = "Add to Poll!";
+    // set up listener for keeping track of venues to add when creating poll
     addBtn.addEventListener("click", function() {
-        venueHttpRequest = new XMLHttpRequest();
-        venueHttpRequest.onreadystatechange = function() {
-            if (venueHttpRequest.readyState === XMLHttpRequest.DONE) {
-                if (venueHttpRequest.status === 200) {
-                    addBtn.classList.toggle("btn-danger");
-                    addBtn.classList.toggle("btn-success");
-                    /* Set.delete(element) returns true if the element exists */
-                    if (venuesToAdd.has(index)) {
-                        venuesToAdd.delete(index);
-                        addBtn.innerText = "Add to Poll!";
-                    } else {
-                        venuesToAdd.add(index);
-                        addBtn.innerText = "Remove";
-                    }
-                } else {
-                    alert("There was a problem with the request");
-                }
+        addBtn.classList.toggle("btn-danger");
+        addBtn.classList.toggle("btn-success");
+        /* Set.delete(element) returns true if the element exists */
+        if (venuesToAdd.has(businessId)) {
+            venuesToAdd.delete(businessId);
+            addBtn.innerText = "Add to Poll!";
+        } else {
+            let venueInfoObj = {
+                "name": business['name'],
+                "category": business['categories'][0]['title'],
+                "img_url": business['img_url'],
+                "rating": business['rating'],
+                "yelp_url": business['yelp_url'],
+            };
+            if (business.hasOwnProperty('price')) {
+                venueInfoObj['price'] = business['price'];
             }
-        };
-        let addOrDeleteData = {
-            "index": index,
-            "add": !venuesToAdd.has(index),
-        };
-        venueHttpRequest.open('POST', '/add_or_delete_venue', true);
-        venueHttpRequest.setRequestHeader('Content-Type', 'application/json');
-        venueHttpRequest.setRequestHeader("X-CSRFToken", csrfToken);
-        venueHttpRequest.send(JSON.stringify(addOrDeleteData));
+            venuesToAdd.set(businessId, venueInfoObj);
+            addBtn.innerText = "Remove";
+        }
     });
-
     countAndAddSpan.appendChild(addBtn);
     countAndAddSpan.appendChild(reviewCount);
 

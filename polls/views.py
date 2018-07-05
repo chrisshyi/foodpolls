@@ -99,16 +99,16 @@ def search_for_venues(request):
         venue_dict = {
                      'name': business['name'],
                      'img_url': business['image_url'],
-                     'category': business['categories'][0],
+                     'categories': business['categories'],
                      'rating': business['rating'],
                      'yelp_url': business['url'],
                      'review_count': business['review_count'],
+                     'yelp_id': business['id'],
                     }
         if 'price' in business:
             venue_dict['price'] = business['price']
-        business_id = business['id']
         # form the request string
-        request_string = "https://api.yelp.com/v3/businesses/{}/reviews".format(business_id)
+        request_string = "https://api.yelp.com/v3/businesses/{}/reviews".format(business['id'])
         # put authorization tokens in the header
         headers = {'Authorization': "Bearer " + settings.YELP_API_KEY,
                    'User-agent': 'foodpolls; contact: chrisshyi13@gmail.com'}
@@ -117,10 +117,7 @@ def search_for_venues(request):
         venue_dict['reviews'] = review_response['reviews']  # list of reviews
         venues_list.append(venue_dict)
 
-    # TODO: why store this in a session??
-    #  Needed later for poll creation, though this will be removed when refactored
-    # request.session['venue_list'] = venues
-    return HttpResponse(json.dumps({'venues_list': venues_list}))  # TODO: Use Jsonresponse instead
+    return HttpResponse(json.dumps({'venues_list': venues_list}))
 
 
 def generate_poll(request):
@@ -130,17 +127,21 @@ def generate_poll(request):
     :param request: the HTTP request object
     :return: a redirection to display the newly created poll
     """
+    # Not supposed to reach this endpoint via GET request
+    if request.method == 'GET':
+        return redirect('view_poll', poll_id=request.session['poll_question_id'])
+
+    venues_to_add = json.loads(request.body)
     # If user decides not to add anything
     # Edge case
-    if 'venues_to_add' not in request.session:
+    if len(venues_to_add) == 0:
         return redirect('view_poll', poll_id=request.session['poll_question_id'])
-    venues = request.session['venues_to_add']
     poll_question = Question.objects.get(id=request.session['poll_question_id'])
 
     # Create Choice objects and save them to database
-    for venue in venues:
+    for venue in venues_to_add:
         try:
-            retrieved_choice = Choice.objects.get(question=poll_question, venue_name=venue['name'])
+            Choice.objects.get(question=poll_question, venue_name=venue['name'])  # see if choice already exists
         except Choice.DoesNotExist:
             choice = Choice(question=poll_question,
                             venue_name=venue['name'],
@@ -151,38 +152,9 @@ def generate_poll(request):
                             )
             if 'price' in venue:
                 choice.price_range = venue['price']
-            choice.rating_is_integer = venue['rating'].is_integer()
+            choice.rating_is_integer = isinstance(venue['rating'], int)
             choice.save()
-    # clear these two session variables so that they won't conflict with additional choices that users
-    # might want to add
-    del request.session['venues_to_add']
-    del request.session['venue_list']
     return redirect('view_poll', poll_id=request.session['poll_question_id'])
-
-
-def add_or_delete_venue(request):
-    """
-    Receives an AJAX request from the frontend to add/delete venues during the poll creation process
-    Uses a session variable to get a hold of a list of venues
-    :param request: the HTTP request object
-    :return: a response object indicating if the addition/deletion was successful
-    """
-    # json.loads(request.body) returns a Python dictionary
-    add_or_delete_data = json.loads(request.body)
-    venue_index = str(add_or_delete_data['index'])
-    venue = request.session['venue_list'][venue_index]
-
-    if "venues_to_add" not in request.session:
-        request.session['venues_to_add'] = []
-    venues_to_add = request.session['venues_to_add']
-    if add_or_delete_data['add']:
-        venues_to_add.append(venue)
-    else:
-        venues_to_add.remove(venue)
-    # need to reassign the session variable since Django only saves session information when
-    # any of the session dictionary values have been assigned or deleted.
-    request.session['venues_to_add'] = venues_to_add
-    return HttpResponse("venue successfully added/deleted")
 
 
 def view_poll(request, poll_id):

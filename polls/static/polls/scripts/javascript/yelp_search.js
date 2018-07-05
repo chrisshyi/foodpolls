@@ -152,8 +152,8 @@ function populateWithResponse() {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
         if (httpRequest.status === 200) {
             response = JSON.parse(httpRequest.responseText);
-            for (let i = 0; i < response['businesses'].length; i++) {
-                let business = response['businesses'][i];
+            for (let i = 0; i < response['venues_list'].length; i++) {
+                let business = response['venues_list'][i];
                 businessListings.appendChild(createNewListing(business, i));
             }
             renderFilterAndSortOptions();
@@ -172,8 +172,8 @@ function populateWithResponse() {
  * @return a new <li> element with Yelp data about the business of interest
  */
 function createNewListing(business, index) {
-    for (let i = 0; i < business['categories'].length; i++) {
-        let category = business['categories'][i];
+    for (let i = 0; i < business['category'].length; i++) {
+        let category = business['category'][i];
         categoryMap.set(category['title'], category['alias']);
     }
     /* innerHttpRequest object will be used for an AJAX call to get reviews for a listing */
@@ -185,7 +185,7 @@ function createNewListing(business, index) {
     let liImage = document.createElement("img");
     liImage.setAttribute("width", "1000");
     liImage.setAttribute("height", "1000");
-    liImage.setAttribute("src", business['image_url']);
+    liImage.setAttribute("src", business['img_url']);
     liImage.classList.add("mr-3", "business-image");
     newLi.appendChild(liImage);
     /* The body of the media listing (Bootstrap) */
@@ -202,13 +202,13 @@ function createNewListing(business, index) {
     let subHeader = document.createElement("h6");
     subHeader.classList.add("mt-0");
     subHeader.classList.add("mb-1");
-    subHeader.innerText = business['categories'][0]['title'];
+    subHeader.innerText = business['category']['title'];
     subHeader.innerText += " " + business['price'];
     subHeader.classList.add("venue-category");
 
     let nameLink = document.createElement("a");
     nameLink.textContent = business['name'];
-    nameLink.setAttribute("href", business['url']);
+    nameLink.setAttribute("href", business['yelp_url']);
     nameLink.setAttribute("target", "_blank");
     mediaHeader.appendChild(nameLink);
     liBody.appendChild(mediaHeader);
@@ -247,7 +247,7 @@ function createNewListing(business, index) {
     ** Add the Yelp image logo
      */
     let yelpPageLink = document.createElement("a");  /* anchor that links to the listing's Yelp page */
-    yelpPageLink.setAttribute("href", business['url']);
+    yelpPageLink.setAttribute("href", business['yelp_url']);
     yelpPageLink.setAttribute("target", "_blank");
     yelpPageLink.classList.add("yelp-page-link");
     let yelpLogo = document.createElement("img");
@@ -307,82 +307,41 @@ function createNewListing(business, index) {
     ratingAndLogo.appendChild(countAndAddSpan);
 
     liBody.appendChild(ratingAndLogo);
+    let reviews = document.createElement("ul");
+    reviews.setAttribute("id", "reviews_list");
+    reviews.classList.add("list-unstyled");
 
-    /**
-     * Gets some reviews for this listing via an AJAX call to the server
-     */
-    function getReviewRequest() {
-        /**
-         *  Get three reviews from Yelp using an AJAX call
-         */
-        let searchData = {
-            "business_id": business['id'],
-        };
+    for (let i = 0; i < business['reviews'].length; i++) {
+        let review = business['reviews'][i];
+        let reviewEntry = document.createElement("li");
+        reviewEntry.classList.add("media", "review-li");
 
-        innerHttpRequest = new XMLHttpRequest();
-        innerHttpRequest.open('POST', '/get_reviews', true);
-        innerHttpRequest.onreadystatechange = appendReviewsToLi;
-        innerHttpRequest.setRequestHeader('Content-Type', 'application/json');
-        innerHttpRequest.setRequestHeader("X-CSRFToken", csrfToken);
-        innerHttpRequest.send(JSON.stringify(searchData));
+
+        let reviewerImage = document.createElement("img");
+        reviewerImage.classList.add("mr-3", "reviewer-img");
+        let srcUrlList = review['user']['image_url'];
+        reviewerImage.setAttribute("src", srcUrlList);
+        reviewerImage.setAttribute("width", "400");
+        reviewerImage.setAttribute("height", "400");
+        reviewerImage.setAttribute("onerror", "this.src=\'/static/polls/img/assets/person_icon.png\'");
+        reviewEntry.appendChild(reviewerImage);
+
+        let reviewEntryBody = document.createElement("div");
+        reviewEntryBody.classList.add("media-body", "review-body");
+        reviewEntry.appendChild(reviewEntryBody);
+
+        // let reviewText = document.createElement("p");
+        let reviewLink = document.createElement("a");
+        reviewLink.classList.add("review-link");
+        reviewLink.setAttribute("target", "_blank");
+        reviewLink.innerText = "Read More";
+        reviewLink.setAttribute("href", review['url']);
+
+        reviewEntryBody.innerText = review['text'];
+        reviewEntryBody.appendChild(reviewLink);
+        reviews.appendChild(reviewEntry);
     }
-
-    /**
-     * Appends reviews to the list item for this listing
-     */
-    function appendReviewsToLi() {
-        /**
-         * Append the reviews to the list item representing the business listing
-         */
-        if (innerHttpRequest.readyState === XMLHttpRequest.DONE) {
-            if (innerHttpRequest.status === 200) {
-                let innerResponse = JSON.parse(innerHttpRequest.responseText);
-                /* Create the reviews div */
-                let reviews = document.createElement("ul");
-                reviews.setAttribute("id", "reviews_list");
-                reviews.classList.add("list-unstyled");
-
-                for (let i = 0; i < 3; i++) {
-                    let review = innerResponse['reviews'][i];
-                    let reviewEntry = document.createElement("li");
-                    reviewEntry.classList.add("media", "review-li");
-
-
-                    let reviewerImage = document.createElement("img");
-                    reviewerImage.classList.add("mr-3", "reviewer-img");
-                    let srcUrlList = review['user']['image_url'];
-                    reviewerImage.setAttribute("src", srcUrlList);
-                    reviewerImage.setAttribute("width", "400");
-                    reviewerImage.setAttribute("height", "400");
-                    reviewerImage.setAttribute("onerror", "this.src=\'/static/polls/img/assets/person_icon.png\'");
-                    reviewEntry.appendChild(reviewerImage);
-
-                    let reviewEntryBody = document.createElement("div");
-                    reviewEntryBody.classList.add("media-body", "review-body");
-                    reviewEntry.appendChild(reviewEntryBody);
-
-                    // let reviewText = document.createElement("p");
-                    let reviewLink = document.createElement("a");
-                    reviewLink.classList.add("review-link");
-                    reviewLink.setAttribute("target", "_blank");
-                    reviewLink.innerText = "Read More";
-                    reviewLink.setAttribute("href", review['url']);
-
-                    reviewEntryBody.innerText = review['text'];
-                    reviewEntryBody.appendChild(reviewLink);
-                    reviews.appendChild(reviewEntry);
-                }
-                liBody.appendChild(reviews);
-            }
-            else {
-                alert('There was a problem with the request.');
-            }
-        }
-    }
-    window.setTimeout(getReviewRequest, 1000);
-    // window.setTimeout(getReviewRequest, 1000);
-    // getReviewRequest();
-
+    liBody.appendChild(reviews);
     return newLi;
 }
 

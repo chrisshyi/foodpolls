@@ -327,3 +327,19 @@ button.add-btn.btn-danger {
     margin-left: -100px;
     margin-top: -15px;
 }
+
+i.fa-spinner {
+    display: none;
+    position: fixed;
+    left: 48vw;
+    top: 30vh;
+    font-size: 5vh;
+    align-items: center;
+    justify-content: center;
+}
+
+/*@media screen and (min-width: 790px) {*/
+    /*i.fa-spinner {*/
+        /*left: 48vw;*/
+    /*}*/
+/*}*/

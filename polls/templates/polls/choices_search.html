@@ -1,67 +1,6 @@
 {% extends 'polls/search_base.html' %}
 {% load widget_tweaks %} 
-{% load static %} 
-{% block stylesheets %}
-<link href="{% static "polls/css/search.css" %}" rel="stylesheet" type="text/css"> 
-{% endblock %} 
-{#{% block modal %}#}
-{#<div class="modal fade" id="category-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">#}
-{#    <div class="modal-dialog" role="document">#}
-{#        <div class="modal-content">#}
-{#            <div class="modal-header">#}
-{#                <h5 class="modal-title" id="category-modal-label">Categories</h5>#}
-{#                <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
-{#                    <span aria-hidden="true">&times;</span>#}
-{#                </button>#}
-{#            </div>#}
-{#            <div class="modal-body">#}
-{#                <div class="row">#}
-{#                    <div class="col-6" id="category-col-one">#}
-{##}
-{#                    </div>#}
-{#                    <div class="col-6" id="category-col-two">#}
-{##}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#            <div class="modal-footer">#}
-{#                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>#}
-{#                <button type="button" class="btn btn-primary" id="select-category-btn">Select</button>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#</div>#}
-{#{% endblock %} #}
-{#{% block content %}#}
-{#<div class="search-container">#}
-{#    <div class="row justify-content-center" id="search-row">#}
-{#        <div class="col-5 col-sm-5">#}
-{#            <div class="input-group">#}
-{#                <input id="search-term" type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">#}
-{#            </div>#}
-{#        </div>#}
-{#        <div class="col-7 col-sm-5">#}
-{#            <div class="input-group">#}
-{#                <input id="search-city" type="text" class="form-control" placeholder="Near..." aria-label="Near...">#}
-{#                <span class="input-group-btn">#}
-{#                    <button id="search-btn" class="btn btn-primary" type="button">Go!</button>#}
-{#                </span>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{##}
-{#    <div class="row main-content">#}
-{#        <div class="col-lg-8 col-md-8 col-sm-12 search-results">#}
-{#            <ul id="business_listings" class="list-unstyled">#}
-{##}
-{#            </ul>#}
-{#        </div>#}
-{##}
-{#        <div class="col-lg-2 col-md-2 col-sm-12" id="search-google-map">#}
-{#        </div>#}
-{#    </div>#}
-{#</div>#}
-{#{% endblock %} #}
+{% load static %}
 {% block footer %} 
     <!-- Container for the filter and sort by options, as a slide-up menu -->
     <div class="container slide-up-hidden" id="slide-up-div">
@@ -99,7 +38,7 @@
             Filter and Sort
         </a>
         <a class="btn btn-primary" href="/generate_poll" role="button" id="create-poll-btn">
-            Create Poll!
+            {% block to_poll_text %}Create Poll! {% endblock %}
         </a>
     </div>    
 {% endblock %}

@@ -2,6 +2,12 @@
 {% load widget_tweaks %} 
 {% load static %} 
 {% block stylesheets %}
+    <!-- Font Awesome for loading spinner -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/solid.css" integrity="sha384-TbilV5Lbhlwdyc4RuIV/JhD8NR+BfMrvz4BL5QFa2we1hQu6wvREr3v6XSRfCTRp" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/fontawesome.css" integrity="sha384-ozJwkrqb90Oa3ZNb+yKFW2lToAWYdTiF1vt8JiH5ptTGHTGcN7qdoR1F95e0kYyG" crossorigin="anonymous">
+    <link href="{% static "polls/css/search.css" %}" rel="stylesheet" type="text/css">
+    {% block additional_css %}
+    {% endblock %}
 {% endblock %}
 {% block fonts %}
 <link href="https://fonts.googleapis.com/css?family=Itim" rel="stylesheet">
@@ -58,6 +64,7 @@
 
             </ul>
         </div>
+        <i class="fas fa-spinner fa-spin"></i>
 
         <div class="col-lg-2 col-md-2 col-sm-12" id="search-google-map">
         </div>

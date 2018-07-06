@@ -36,6 +36,7 @@ let selectedCategories = new Map();
 /* Add click event listener for the search button */
 document.getElementById("search-btn").addEventListener("click", function() {
     if (searchTerm.value !== "" && city.value !== "") {
+        document.querySelector(".fa-spinner").style.display = "block";
         categoryMap.clear();
         selectedCategories.clear();
         makeSearchRequest(searchTerm.value, city.value)
@@ -190,6 +191,7 @@ function populateWithResponse() {
                 businessListings.appendChild(createNewListing(business, i));
             }
             renderFilterAndSortOptions();
+            document.querySelector(".fa-spinner").style.display = "none";
         }
         else {
             alert('There was a problem with the request.');
@@ -219,6 +221,7 @@ function createNewListing(business, index) {
     liImage.setAttribute("width", "1000");
     liImage.setAttribute("height", "1000");
     liImage.setAttribute("src", business['img_url']);
+    liImage.setAttribute("alt", "Image Not Found");
     liImage.classList.add("mr-3", "business-image");
     newLi.appendChild(liImage);
     /* The body of the media listing (Bootstrap) */

@@ -106,6 +106,7 @@ window.addEventListener("load", function() {
  * request to the server for filtered and/or sorted results
  */
 document.getElementById("refine-btn").addEventListener("click", function() {
+    document.querySelector(".fa-spinner").style.display = "block";
     /* Retract the filter/sort pop-up and the grey overlay */
     let slideUpDiv = document.getElementById("slide-up-div");
     slideUpDiv.classList.toggle("slide-up-hidden");

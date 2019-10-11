@@ -79,6 +79,7 @@ def search_for_venues(request):
 
     headers = {'Authorization': "Bearer " + settings.YELP_API_KEY,
                'User-agent': 'foodpolls; contact: chrisshyi13@gmail.com'}
+    print(settings.YELP_API_KEY)
     params = {
         'term': search_term,
         'location': city,
